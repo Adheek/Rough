@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instruments - NTT DATA</title>
+    <link href="https://unpkg.com/tabulator-tables@5.5.0/dist/css/tabulator.min.css" rel="stylesheet">
+    <script src="https://unpkg.com/tabulator-tables@5.5.0/dist/js/tabulator.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f5f5f5; }
+        .header { background: #4a6c7d; color: white; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 20px; font-weight: bold; }
+        .container { max-width: 100%; margin: 0; padding: 20px; }
+        .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .search { padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; width: 300px; }
+        .btn { padding: 8px 16px; background: #4a6c7d; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 600; font-size: 13px; }
+        .btn:hover { background: #3a5a6d; }
+        #instrument-table { background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .tabulator .tabulator-header { background: #4a6c7d; color: white; font-weight: 600; }
+        .tabulator .tabulator-header .tabulator-col { background: #4a6c7d; border-right: 1px solid #5a7c8d; }
+        .tabulator-row:hover { background: #f8f9fa !important; cursor: pointer; }
+        .status { padding: 4px 12px; border-radius: 12px; font-size: 11px; font-weight: 600; }
+        .status.operational { background: #e8f5e9; color: #2e7d32; }
+        .status.maintenance { background: #fff3e0; color: #ef6c00; }
+        .status.out-of-service { background: #ffebee; color: #c62828; }
+        .status.calibration { background: #e3f2fd; color: #1565c0; }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; z-index: 1000; }
+        .modal.active { display: flex; }
+        .modal-content { background: white; padding: 30px; border-radius: 8px; width: 600px; max-width: 95%; max-height: 90vh; overflow-y: auto; }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 2px solid #4a6c7d; }
+        .modal-title { font-size: 22px; color: #4a6c7d; font-weight: 600; }
+        .close { font-size: 28px; cursor: pointer; color: #999; border: none; background: none; }
+        .close:hover { color: #333; }
+        .form-group { margin-bottom: 15px; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .form-label { display: block; margin-bottom: 5px; font-weight: 600; font-size: 13px; color: #333; }
+        .form-input { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; }
+        .form-input:focus { outline: none; border-color: #4a6c7d; }
+        .tag-select-container { border: 1px solid #ddd; border-radius: 4px; padding: 8px; background: white; min-height: 80px; }
+        .tags-display { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 8px; }
+        .tag { background: #4a6c7d; color: white; padding: 6px 12px; border-radius: 20px; display: inline-flex; align-items: center; gap: 8px; font-size: 13px; }
+        .tag-remove { cursor: pointer; font-weight: bold; font-size: 16px; line-height: 1; }
+        .tag-remove:hover { color: #ff6b6b; }
+        .tag-input-wrapper { position: relative; }
+        .tag-input { border: none; padding: 4px; width: 100%; }
+        .tag-input:focus { outline: none; border: none; }
+        .tag-dropdown { display: none; position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid #4a6c7d; border-radius: 4px; max-height: 200px; overflow-y: auto; z-index: 1000; box-shadow: 0 4px 8px rgba(0,0,0,0.15); margin-top: 4px; }
+        .tag-dropdown.show { display: block; }
+        .tag-dropdown-item { padding: 10px 12px; cursor: pointer; font-size: 14px; border-bottom: 1px solid #f0f0f0; }
+        .tag-dropdown-item:hover { background: #f0f0f0; }
+        .tag-dropdown-item:last-child { border-bottom: none; }
+        .modal-footer { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
+        .btn-secondary { background: #e0e0e0; color: #333; }
+        .btn-secondary:hover { background: #d0d0d0; }
+        .scheduled-maintenance-section { margin-top: 25px; padding-top: 20px; border-top: 2px solid #e0e0e0; }
+        .section-title { font-size: 16px; color: #4a6c7d; margin-bottom: 15px; font-weight: 600; }
+        .maintenance-row { background: #f8f9fa; padding: 15px; border-radius: 6px; margin-bottom: 12px; position: relative; }
+        .maintenance-row-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .maintenance-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+        .btn-remove-maintenance { background: #e74c3c; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: 600; }
+        .btn-remove-maintenance:hover { background: #c0392b; }
+        .btn-add-maintenance { width: 100%; padding: 10px; background: #27ae60; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 600; margin-top: 10px; }
+        .btn-add-maintenance:hover { background: #229954; }
+    </style>
+</head>
+<body>
+    <div class="header"><div class="logo">NTT DATA - INSTRUMENTS</div></div>
+    <div class="container">
+        <div class="top-bar">
+            <input class="search" id="searchInput" placeholder="Search instruments...">
+            <button class="btn" onclick="openAddModal()">+ ADD INSTRUMENT</button>
+        </div>
+        <div id="instrument-table"></div>
+    </div>
+
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="modal-title" id="modalTitle">Instrument Details</span>
+                <button class="close" onclick="closeModal()">&times;</button>
+            </div>
+            <form id="instrumentForm" onsubmit="saveInstrument(event)">
+                <input type="hidden" id="instrumentId">
+                <div class="form-row">
+                    <div class="form-group"><label class="form-label">Instrument Code</label><input type="text" id="code" class="form-input" placeholder="INS-XXXX" required></div>
+                    <div class="form-group"><label class="form-label">Instrument Name</label><input type="text" id="name" class="form-input" placeholder="HPLC System" required></div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label class="form-label">Type</label><select id="type" class="form-input" required><option value="">Select Type</option></select></div>
+                    <div class="form-group"><label class="form-label">Manufacturer</label><input type="text" id="manufacturer" class="form-input" placeholder="Agilent, Waters..." required></div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label class="form-label">Model Number</label><input type="text" id="modelNumber" class="form-input" placeholder="Model-1234" required></div>
+                    <div class="form-group"><label class="form-label">Serial Number</label><input type="text" id="serialNumber" class="form-input" placeholder="SN-123456789" required></div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label class="form-label">Location</label><select id="location" class="form-input" required><option value="">Select Location</option></select></div>
+                    <div class="form-group"><label class="form-label">Status</label>
+                        <select id="status" class="form-input" required>
+                            <option value="">Select Status</option>
+                            <option value="operational">Operational</option>
+                            <option value="maintenance">Maintenance</option>
+                            <option value="calibration">Calibration</option>
+                            <option value="out-of-service">Out of Service</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label class="form-label">Purchase Date</label><input type="date" id="purchaseDate" class="form-input" required></div>
+                    <div class="form-group"><label class="form-label">Warranty Expiry</label><input type="date" id="warrantyExpiry" class="form-input" required></div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label class="form-label">Last Calibration</label><input type="date" id="lastCalibration" class="form-input" required></div>
+                    <div class="form-group"><label class="form-label">Next Calibration</label><input type="date" id="nextCalibration" class="form-input" required></div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label class="form-label">Calibration Frequency (days)</label><input type="number" id="calibrationFrequency" class="form-input" placeholder="90" required></div>
+                    <div class="form-group"><label class="form-label">Usage Hours</label><input type="number" id="usageHours" class="form-input" placeholder="1200" required></div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Test Types Supported</label>
+                    <div class="tag-select-container">
+                        <div class="tags-display" id="testTypesTags"></div>
+                        <div class="tag-input-wrapper">
+                            <input type="text" id="testTypesInput" class="form-input tag-input" placeholder="Type to search...">
+                            <div class="tag-dropdown" id="testTypesDropdown"></div>
+                        </div>
+                    </div>
+                    <input type="hidden" id="testTypes">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Qualified Operators</label>
+                    <div class="tag-select-container">
+                        <div class="tags-display" id="operatorsTags"></div>
+                        <div class="tag-input-wrapper">
+                            <input type="text" id="operatorsInput" class="form-input tag-input" placeholder="Type to search...">
+                            <div class="tag-dropdown" id="operatorsDropdown"></div>
+                        </div>
+                    </div>
+                    <input type="hidden" id="operators">
+                </div>
+                <div class="form-group"><label class="form-label">Notes / Specifications</label><textarea id="notes" class="form-input" rows="3" placeholder="Additional notes..."></textarea></div>
+                <div class="scheduled-maintenance-section">
+                    <h3 class="section-title">🔧 Scheduled Maintenance</h3>
+                    <div id="maintenanceList"></div>
+                    <button type="button" class="btn-add-maintenance" onclick="addMaintenanceRow()">+ Add Maintenance Schedule</button>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn">SAVE</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeModal()">CANCEL</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const API = '/api/instruments';
+        let table, isEditMode = false, instruments = [], config = {types: [], locations: [], testTypes: [], operators: []};
+
+        async function init() {
+            await Promise.all([
+                fetch('/api/instrument-types').then(r => r.json()).then(d => config.types = d).catch(() => {}),
+                fetch('/api/locations').then(r => r.json()).then(d => config.locations = d).catch(() => {}),
+                fetch('/api/test-types').then(r => r.json()).then(d => config.testTypes = d).catch(() => {}),
+                fetch('/api/operators').then(r => r.json()).then(d => config.operators = d).catch(() => {})
+            ]);
+            
+            ['type', 'location'].forEach(id => config[id + 's'].forEach(v => document.getElementById(id).add(new Option(v, v))));
+            setupTagSelect('testTypes', config.testTypes);
+            setupTagSelect('operators', config.operators);
+            
+            instruments = await fetch(API).then(r => r.json()).catch(() => []);
+            renderTable();
+        }
+
+        function renderTable() {
+            table = new Tabulator("#instrument-table", {
+                data: instruments,
+                layout: "fitColumns",
+                height: "calc(100vh - 200px)",
+                rowHeight: 45,
+                columns: [
+                    {title: "Code", field: "code", width: 120, sorter: "string"},
+                    {title: "Name", field: "name", sorter: "string"},
+                    {title: "Type", field: "type", sorter: "string"},
+                    {title: "Location", field: "location", sorter: "string"},
+                    {title: "Manufacturer", field: "manufacturer", sorter: "string"},
+                    {title: "Status", field: "status", width: 140, sorter: "string", formatter: c => `<span class="status status-${c.getValue()}">${c.getValue().replace('-', ' ').toUpperCase()}</span>`}
+                ]
+            });
+            table.on("rowClick", (e, row) => openViewModal(row.getData().id));
+            document.getElementById('searchInput').addEventListener('keyup', e => {
+                table.setFilter([
+                    {field: "code", type: "like", value: e.target.value},
+                    {field: "name", type: "like", value: e.target.value},
+                    {field: "type", type: "like", value: e.target.value},
+                    {field: "manufacturer", type: "like", value: e.target.value}
+                ], "or");
+            });
+        }
+
+        function setupTagSelect(field, options) {
+            const input = document.getElementById(field + 'Input'), dropdown = document.getElementById(field + 'Dropdown');
+            let selected = [];
+            
+            input.addEventListener('focus', () => showDropdown(dropdown, options, selected));
+            input.addEventListener('input', () => showDropdown(dropdown, options.filter(o => o.toLowerCase().includes(input.value.toLowerCase()) && !selected.includes(o)), selected));
+            document.addEventListener('click', e => { if (!e.target.closest('.tag-input-wrapper')) dropdown.classList.remove('show'); });
+            
+            window['tag_' + field] = {
+                selected,
+                render: () => {
+                    document.getElementById(field + 'Tags').innerHTML = selected.map(t => `<div class="tag">${t}<span class="tag-remove" onclick="removeTag('${field}','${t}')">×</span></div>`).join('');
+                    document.getElementById(field).value = selected.join(', ');
+                },
+                add: v => { if (!selected.includes(v)) { selected.push(v); window['tag_' + field].render(); } },
+                remove: v => { selected = selected.filter(s => s !== v); window['tag_' + field].render(); },
+                set: arr => { selected = arr; window['tag_' + field].render(); }
+            };
+        }
+
+        function showDropdown(dropdown, options, selected) {
+            const available = options.filter(o => !selected.includes(o));
+            dropdown.innerHTML = available.length ? available.map(o => `<div class="tag-dropdown-item" onclick="addTag(event, '${o}')">${o}</div>`).join('') : '';
+            dropdown.classList.toggle('show', available.length > 0);
+        }
+
+        function addTag(e, val) {
+            const field = e.target.closest('.tag-input-wrapper').previousElementSibling.id.replace('Tags', '');
+            window['tag_' + field].add(val);
+            document.getElementById(field + 'Input').value = '';
+            document.getElementById(field + 'Dropdown').classList.remove('show');
+        }
+
+        function removeTag(field, val) { window['tag_' + field].remove(val); }
+
+        function openViewModal(id) {
+            const inst = instruments.find(i => i.id == id);
+            if (!inst) return alert('Not found!');
+            
+            isEditMode = true;
+            document.getElementById('modalTitle').textContent = 'Edit Instrument';
+            ['id', 'code', 'name', 'type', 'manufacturer', 'modelNumber', 'serialNumber', 'location', 'status', 
+             'purchaseDate', 'warrantyExpiry', 'lastCalibration', 'nextCalibration', 'calibrationFrequency', 
+             'usageHours', 'notes'].forEach(k => {
+                const el = document.getElementById(k === 'id' ? 'instrumentId' : k);
+                if (el) el.value = inst[k] || '';
+            });
+            
+            window['tag_testTypes'].set(inst.testTypes ? inst.testTypes.split(',').map(t => t.trim()) : []);
+            window['tag_operators'].set(inst.operators ? inst.operators.split(',').map(o => o.trim()) : []);
+            loadMaintenance(inst.scheduledMaintenance || []);
+            document.getElementById('modal').classList.add('active');
+        }
+
+        function loadMaintenance(list) {
+            document.getElementById('maintenanceList').innerHTML = '';
+            list.forEach(m => addMaintenanceRow(m));
+        }
+
+        function addMaintenanceRow(data = null) {
+            const idx = document.getElementById('maintenanceList').children.length;
+            const row = document.createElement('div');
+            row.className = 'maintenance-row';
+            row.innerHTML = `
+                <div class="maintenance-row-header"><strong>Maintenance #${idx + 1}</strong>
+                    <button type="button" class="btn-remove-maintenance" onclick="this.closest('.maintenance-row').remove(); renumberMaintenance()">Remove</button>
+                </div>
+                <div class="maintenance-fields">
+                    <div class="form-group"><label class="form-label">Start Date</label><input type="datetime-local" class="form-input m-start" value="${data?.start || ''}" required></div>
+                    <div class="form-group"><label class="form-label">End Date</label><input type="datetime-local" class="form-input m-end" value="${data?.end || ''}" required></div>
+                </div>
+                <div class="maintenance-fields">
+                    <div class="form-group"><label class="form-label">Type</label>
+                        <select class="form-input m-type" required>
+                            <option value="">Select</option>
+                            ${['Preventive Maintenance', 'Calibration', 'Repair', 'Qualification', 'Cleaning'].map(t => 
+                                `<option value="${t}" ${data?.type === t ? 'selected' : ''}>${t}</option>`).join('')}
+                        </select>
+                    </div>
+                    <div class="form-group"><label class="form-label">Technician</label><input type="text" class="form-input m-tech" value="${data?.technician || ''}"></div>
+                </div>
+                <div class="form-group"><label class="form-label">Notes</label><input type="text" class="form-input m-notes" value="${data?.notes || ''}"></div>
+            `;
+            document.getElementById('maintenanceList').appendChild(row);
+        }
+
+        function renumberMaintenance() {
+            document.querySelectorAll('.maintenance-row').forEach((r, i) => r.querySelector('strong').textContent = `Maintenance #${i + 1}`);
+        }
+
+        function getMaintenance() {
+            return Array.from(document.querySelectorAll('.maintenance-row')).map(r => ({
+                start: r.querySelector('.m-start').value,
+                end: r.querySelector('.m-end').value,
+                type: r.querySelector('.m-type').value,
+                technician: r.querySelector('.m-tech').value,
+                notes: r.querySelector('.m-notes').value
+            }));
+        }
+
+        function openAddModal() {
+            isEditMode = false;
+            document.getElementById('modalTitle').textContent = 'Add New Instrument';
+            document.getElementById('instrumentForm').reset();
+            document.getElementById('maintenanceList').innerHTML = '';
+            window['tag_testTypes'].set([]);
+            window['tag_operators'].set([]);
+            document.getElementById('modal').classList.add('active');
+        }
+
+        function closeModal() { document.getElementById('modal').classList.remove('active'); }
+
+        async function saveInstrument(e) {
+            e.preventDefault();
+            const data = {
+                code: document.getElementById('code').value,
+                name: document.getElementById('name').value,
+                type: document.getElementById('type').value,
+                manufacturer: document.getElementById('manufacturer').value,
+                modelNumber: document.getElementById('modelNumber').value,
+                serialNumber: document.getElementById('serialNumber').value,
+                location: document.getElementById('location').value,
+                status: document.getElementById('status').value,
+                purchaseDate: document.getElementById('purchaseDate').value,
+                warrantyExpiry: document.getElementById('warrantyExpiry').value,
+                lastCalibration: document.getElementById('lastCalibration').value,
+                nextCalibration: document.getElementById('nextCalibration').value,
+                calibrationFrequency: document.getElementById('calibrationFrequency').value,
+                usageHours: document.getElementById('usageHours').value,
+                testTypes: document.getElementById('testTypes').value,
+                operators: document.getElementById('operators').value,
+                notes: document.getElementById('notes').value,
+                scheduledMaintenance: getMaintenance()
+            };
+
+            try {
+                if (isEditMode) {
+                    const id = document.getElementById('instrumentId').value;
+                    await fetch(`${API}/${id}`, {method: 'PUT', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(data)});
+                    Object.assign(instruments.find(i => i.id == id), data);
+                } else {
+                    const res = await fetch(API, {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(data)});
+                    instruments.push(await res.json());
+                }
+                table.setData(instruments);
+                closeModal();
+                alert('Saved!');
+            } catch (err) {
+                alert('Error: ' + err.message);
+            }
+        }
+
+        document.getElementById('modal').onclick = e => { if (e.target.id === 'modal') closeModal(); };
+        init();
+    </script>
+</body>
+</html>

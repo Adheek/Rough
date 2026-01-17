@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NTT DATA - Machines</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: #f5f7fa;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c5f7c 0%, #1a3a4d 100%);
+            color: white;
+            padding: 20px 40px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .container {
+            padding: 30px;
+        }
+
+        .date-filter {
+            background: white;
+            padding: 20px;
+            border-radius: 0;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.06);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            position: sticky;
+            top: 64px;
+            z-index: 99;
+        }
+
+        .date-filter label {
+            font-weight: 600;
+            color: #2c5f7c;
+            font-size: 14px;
+        }
+
+        .date-filter input {
+            padding: 10px 15px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .date-filter input:focus {
+            outline: none;
+            border-color: #2c5f7c;
+        }
+
+        .date-filter select {
+            padding: 10px 15px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            background: white;
+            cursor: pointer;
+            transition: border-color 0.3s;
+            min-width: 200px;
+        }
+
+        .date-filter select:focus {
+            outline: none;
+            border-color: #2c5f7c;
+        }
+
+
+        .tasks-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .task-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            transition: transform 0.2s, box-shadow 0.2s;
+            position: relative;
+            border-bottom: 4px solid;
+            z-index: 1;
+        }
+
+        .task-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+            z-index: 2;
+        }
+
+        .task-card.status-active {
+            border-bottom-color: #10b981;
+        }
+
+        .task-card.status-idle {
+            border-bottom-color: #f59e0b;
+        }
+
+        .task-card.status-maintenance {
+            border-bottom-color: #ef4444;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+
+        .task-id {
+            font-size: 14px;
+            font-weight: 600;
+            color: #6b7280;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-badge.active {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .status-badge.active::before {
+            content: '⚡';
+            font-size: 12px;
+        }
+
+        .status-badge.idle {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .status-badge.idle::before {
+            content: '⏸';
+            font-size: 12px;
+        }
+
+        .status-badge.maintenance {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .status-badge.maintenance::before {
+            content: '🔧';
+            font-size: 12px;
+        }
+
+        .machine-name {
+            font-size: 15px;
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 4px;
+            line-height: 1.4;
+        }
+
+        .machine-info {
+            font-size: 13px;
+            color: #6b7280;
+            margin-bottom: 12px;
+        }
+
+        .time-slot-info {
+            background: #f0f9ff;
+            border-left: 3px solid #2c5f7c;
+            padding: 8px 12px;
+            border-radius: 4px;
+            margin-bottom: 12px;
+            font-size: 12px;
+            color: #111827;
+            font-weight: 500;
+        }
+
+        .expand-button {
+            background: #f3f4f6;
+            border: 1px solid #e5e7eb;
+            color: #6b7280;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 11px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+            width: 100%;
+            justify-content: center;
+            font-weight: 500;
+        }
+
+        .expand-button:hover {
+            background: #e5e7eb;
+            border-color: #d1d5db;
+        }
+
+        .expand-button .icon {
+            transition: transform 0.3s;
+        }
+
+        .expand-button.expanded .icon {
+            transform: rotate(180deg);
+        }
+
+        .machine-details-card {
+            background: white;
+            border-radius: 8px;
+            padding: 12px;
+            display: none;
+            border: 1px solid #e5e7eb;
+            position: absolute;
+            top: calc(100% + 4px);
+            left: -20px;
+            right: -20px;
+            z-index: 10;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        }
+
+        .machine-details-card.expanded {
+            display: block;
+        }
+
+        .task-card.has-expanded {
+            z-index: 20;
+        }
+
+        .expand-section {
+            position: relative;
+            margin-bottom: 12px;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 0;
+            font-size: 11px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            color: #6b7280;
+            font-weight: 500;
+        }
+
+        .detail-value {
+            color: #111827;
+            font-weight: 600;
+            text-align: right;
+        }
+
+        .operator-section {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid #f3f4f6;
+        }
+
+        .operator-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .operator-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 14px;
+            color: white;
+        }
+
+        .operator-details {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .operator-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: #111827;
+        }
+
+        .operator-role {
+            font-size: 11px;
+            color: #6b7280;
+        }
+
+        .arrow-button {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #111827;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background 0.2s;
+            border: none;
+        }
+
+        .arrow-button:hover {
+            background: #2c5f7c;
+        }
+
+        .no-tasks {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 60px;
+            color: #9ca3af;
+            font-size: 15px;
+        }
+
+        /* Side Panel Styles */
+        .side-panel {
+            position: fixed;
+            top: 0;
+            right: -450px;
+            width: 450px;
+            height: 100vh;
+            background: white;
+            box-shadow: -4px 0 20px rgba(0,0,0,0.15);
+            transition: right 0.3s ease;
+            z-index: 1000;
+            overflow-y: auto;
+        }
+
+        .side-panel.open {
+            right: 0;
+        }
+
+        .panel-header {
+            background: linear-gradient(135deg, #2c5f7c 0%, #1a3a4d 100%);
+            color: white;
+            padding: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .panel-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .close-btn {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+
+        .close-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .panel-content {
+            padding: 24px;
+        }
+
+        .info-section {
+            margin-bottom: 24px;
+        }
+
+        .info-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            color: #6b7280;
+            font-weight: 600;
+            margin-bottom: 8px;
+            letter-spacing: 0.5px;
+        }
+
+        .info-value {
+            font-size: 15px;
+            color: #111827;
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .info-subvalue {
+            font-size: 13px;
+            color: #6b7280;
+        }
+
+        .status-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-top: 4px;
+        }
+
+        .status-indicator.active {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .status-indicator.idle {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .operator-card {
+            background: #f9fafb;
+            padding: 16px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .operator-avatar-large {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 18px;
+            color: white;
+        }
+
+        .time-info {
+            background: #f0f9ff;
+            border-left: 3px solid #2c5f7c;
+            padding: 12px;
+            border-radius: 4px;
+            margin-top: 12px;
+        }
+
+        .time-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .time-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .time-label {
+            font-size: 12px;
+            color: #6b7280;
+        }
+
+        .time-value {
+            font-size: 13px;
+            font-weight: 600;
+            color: #111827;
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s;
+            z-index: 999;
+        }
+
+        .overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        @media (max-width: 768px) {
+            .tasks-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header {
+                padding: 15px 20px;
+            }
+            
+            .date-filter {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .container {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>NTT DATA - MACHINES</h1>
+    </div>
+
+    <div class="container">
+        <div class="date-filter">
+            <label for="dateSelect">Select Date:</label>
+            <input type="date" id="dateSelect" value="">
+
+            <label for="machineSelect" style="margin-left: 20px;">Machine:</label>
+            <select id="machineSelect">
+                <option value="all">All Machines</option>
+            </select>
+        </div>
+
+        <div class="tasks-grid" id="tasksGrid">
+            <!-- Task cards will be populated here -->
+        </div>
+    </div>
+
+    <!-- Side Panel -->
+    <div class="overlay" id="overlay" onclick="closeSidePanel()"></div>
+    <div class="side-panel" id="sidePanel">
+        <div class="panel-header">
+            <div class="panel-title">Task Details</div>
+            <button class="close-btn" onclick="closeSidePanel()">×</button>
+        </div>
+        <div class="panel-content" id="panelContent">
+            <!-- Content will be populated dynamically -->
+        </div>
+    </div>
+
+    <script src="mockData.js"></script>
+    <script>
+        // Set today's date as default
+        const dateInput = document.getElementById('dateSelect');
+        const machineSelect = document.getElementById('machineSelect');
+        const today = new Date().toISOString().split('T')[0];
+        dateInput.value = today;
+
+        // Avatar colors based on operator name
+        const avatarColors = [
+            '#3b82f6', '#8b5cf6', '#ec4899', '#f59e0b', 
+            '#10b981', '#06b6d4', '#6366f1', '#ef4444'
+        ];
+
+        function getAvatarColor(name) {
+            const index = name.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+            return avatarColors[index % avatarColors.length];
+        }
+
+        function getInitials(name) {
+            return name.split(' ').map(n => n[0]).join('').toUpperCase();
+        }
+
+        function parseTime(timeStr) {
+            const [time, period] = timeStr.split(' ');
+            let [hours, minutes] = time.split(':').map(Number);
+            if (period === 'PM' && hours !== 12) hours += 12;
+            if (period === 'AM' && hours === 12) hours = 0;
+            return hours * 60 + minutes;
+        }
+
+        function calculateProgress(timeSlot) {
+            const [start, end] = timeSlot.split(' - ');
+            const startMinutes = parseTime(start);
+            const endMinutes = parseTime(end);
+            const now = new Date();
+            const currentMinutes = now.getHours() * 60 + now.getMinutes();
+            
+            if (currentMinutes < startMinutes) return 0;
+            if (currentMinutes > endMinutes) return 100;
+            
+            return ((currentMinutes - startMinutes) / (endMinutes - startMinutes)) * 100;
+        }
+
+        function populateMachineFilter(date) {
+            const filteredData = machineData.filter(machine => machine.date === date);
+            const uniqueMachines = [...new Set(filteredData.map(m => m.machineName))];
+
+            machineSelect.innerHTML = '<option value="all">All Machines</option>' +
+                uniqueMachines.map(machine =>
+                    `<option value="${machine}">${machine}</option>`
+                ).join('');
+        }
+
+        function renderTasks(date, selectedMachine = 'all') {
+            const tasksGrid = document.getElementById('tasksGrid');
+            let filteredData = machineData.filter(machine => machine.date === date);
+
+            if (selectedMachine !== 'all') {
+                filteredData = filteredData.filter(machine => machine.machineName === selectedMachine);
+            }
+
+            if (filteredData.length === 0) {
+                tasksGrid.innerHTML = '<div class="no-tasks">No tasks found for the selected filters</div>';
+                return;
+            }
+
+            // Flatten tasks with machine info
+            const allTasks = [];
+            filteredData.forEach(machine => {
+                machine.tasks.forEach((task, index) => {
+                    allTasks.push({
+                        ...task,
+                        machineId: machine.machineId,
+                        machineName: machine.machineName,
+                        location: machine.location,
+                        status: machine.status,
+                        manufacturer: machine.manufacturer,
+                        model: machine.model,
+                        serialNumber: machine.serialNumber,
+                        installDate: machine.installDate,
+                        capacity: machine.capacity,
+                        lastMaintenance: machine.lastMaintenance,
+                        nextMaintenance: machine.nextMaintenance,
+                        taskId: `${machine.machineId.split('-')[1]}-${index + 1}`,
+                        date: machine.date
+                    });
+                });
+            });
+
+            if (allTasks.length === 0) {
+                tasksGrid.innerHTML = '<div class="no-tasks">No tasks assigned for this date</div>';
+                return;
+            }
+
+            tasksGrid.innerHTML = allTasks.map((task, idx) => {
+                const statusClass = task.status.toLowerCase().replace(' ', '-');
+                const avatarColor = getAvatarColor(task.operator);
+                const initials = getInitials(task.operator);
+                const progress = calculateProgress(task.timeSlot);
+                const [startTime, endTime] = task.timeSlot.split(' - ');
+
+                return `
+                    <div class="task-card status-${statusClass}">
+                        <div class="card-header">
+                            <span class="task-id">#${task.taskId}</span>
+                            <span class="status-badge ${statusClass}">${task.status}</span>
+                        </div>
+
+                        <div class="machine-name">${task.machineName}</div>
+                        <div class="machine-info">${task.taskName}</div>
+
+                        <div class="time-slot-info">⏰ ${startTime} - ${endTime}</div>
+
+                        <div class="expand-section">
+                            <button class="expand-button" onclick="toggleMachineDetails(this)">
+                                <span>Machine Details</span>
+                                <span class="icon">▼</span>
+                            </button>
+
+                            <div class="machine-details-card">
+                                <div class="detail-row">
+                                    <span class="detail-label">Manufacturer</span>
+                                    <span class="detail-value">${task.manufacturer || 'N/A'}</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="detail-label">Model</span>
+                                    <span class="detail-value">${task.model || 'N/A'}</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="detail-label">Serial Number</span>
+                                    <span class="detail-value">${task.serialNumber || 'N/A'}</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="detail-label">Capacity</span>
+                                    <span class="detail-value">${task.capacity || 'N/A'}</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="detail-label">Last Maintenance</span>
+                                    <span class="detail-value">${task.lastMaintenance ? new Date(task.lastMaintenance).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : 'N/A'}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="operator-section">
+                            <div class="operator-info">
+                                <div class="operator-avatar" style="background: ${avatarColor}">
+                                    ${initials}
+                                </div>
+                                <div class="operator-details">
+                                    <span class="operator-name">${task.operator}</span>
+                                    <span class="operator-role">${task.location}</span>
+                                </div>
+                            </div>
+                            <button class="arrow-button" onclick='openSidePanel(${JSON.stringify(task).replace(/'/g, "&apos;")})'>
+                                →
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function openSidePanel(task) {
+            const panel = document.getElementById('sidePanel');
+            const overlay = document.getElementById('overlay');
+            const content = document.getElementById('panelContent');
+            
+            const avatarColor = getAvatarColor(task.operator);
+            const initials = getInitials(task.operator);
+            const statusClass = task.status.toLowerCase().replace(' ', '-');
+            const [startTime, endTime] = task.timeSlot.split(' - ');
+            const progress = calculateProgress(task.timeSlot);
+            
+            content.innerHTML = `
+                <div class="info-section">
+                    <div class="info-label">Task ID</div>
+                    <div class="info-value">#${task.taskId}</div>
+                </div>
+
+                <div class="info-section">
+                    <div class="info-label">Task Details</div>
+                    <div class="info-value">${task.taskName}</div>
+                </div>
+
+                <div class="info-section">
+                    <div class="info-label">Machine Information</div>
+                    <div class="info-value">${task.machineName}</div>
+                    <div class="info-subvalue">${task.machineId} • ${task.location}</div>
+                    <span class="status-indicator ${statusClass}">${task.status}</span>
+                    <div class="time-info" style="margin-top: 12px;">
+                        <div class="time-row">
+                            <span class="time-label">Manufacturer:</span>
+                            <span class="time-value">${task.manufacturer || 'N/A'}</span>
+                        </div>
+                        <div class="time-row">
+                            <span class="time-label">Model:</span>
+                            <span class="time-value">${task.model || 'N/A'}</span>
+                        </div>
+                        <div class="time-row">
+                            <span class="time-label">Serial Number:</span>
+                            <span class="time-value">${task.serialNumber || 'N/A'}</span>
+                        </div>
+                        <div class="time-row">
+                            <span class="time-label">Capacity:</span>
+                            <span class="time-value">${task.capacity || 'N/A'}</span>
+                        </div>
+                        <div class="time-row">
+                            <span class="time-label">Install Date:</span>
+                            <span class="time-value">${task.installDate ? new Date(task.installDate).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) : 'N/A'}</span>
+                        </div>
+                        <div class="time-row">
+                            <span class="time-label">Last Maintenance:</span>
+                            <span class="time-value">${task.lastMaintenance ? new Date(task.lastMaintenance).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) : 'N/A'}</span>
+                        </div>
+                        <div class="time-row">
+                            <span class="time-label">Next Maintenance:</span>
+                            <span class="time-value">${task.nextMaintenance ? new Date(task.nextMaintenance).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) : 'N/A'}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info-section">
+                    <div class="info-label">Assigned Operator</div>
+                    <div class="operator-card">
+                        <div class="operator-avatar-large" style="background: ${avatarColor}">
+                            ${initials}
+                        </div>
+                        <div>
+                            <div class="info-value">${task.operator}</div>
+                            <div class="info-subvalue">${task.operatorId || 'N/A'}</div>
+                        </div>
+                    </div>
+                    <div class="time-info" style="margin-top: 12px;">
+                        <div class="time-row">
+                            <span class="time-label">Shift:</span>
+                            <span class="time-value">${task.shift || 'N/A'}</span>
+                        </div>
+                        <div class="time-row">
+                            <span class="time-label">Contact:</span>
+                            <span class="time-value">${task.contact || 'N/A'}</span>
+                        </div>
+                        <div class="time-row">
+                            <span class="time-label">Phone:</span>
+                            <span class="time-value">${task.phoneExt || 'N/A'}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info-section">
+                    <div class="info-label">Time Schedule & Operator Timings</div>
+                    <div class="time-info">
+                        <div class="time-row">
+                            <span class="time-label">Start Time:</span>
+                            <span class="time-value">${startTime}</span>
+                        </div>
+                        <div class="time-row">
+                            <span class="time-label">End Time:</span>
+                            <span class="time-value">${endTime}</span>
+                        </div>
+                        <div class="time-row">
+                            <span class="time-label">Break Time:</span>
+                            <span class="time-value">${task.breakTime || 'N/A'}</span>
+                        </div>
+                        <div class="time-row">
+                            <span class="time-label">Total Hours:</span>
+                            <span class="time-value">${task.totalHours || 'N/A'} hours</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info-section">
+                    <div class="info-label">Date</div>
+                    <div class="info-value">${new Date(task.date).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</div>
+                </div>
+            `;
+            
+            panel.classList.add('open');
+            overlay.classList.add('show');
+        }
+
+        function closeSidePanel() {
+            const panel = document.getElementById('sidePanel');
+            const overlay = document.getElementById('overlay');
+            panel.classList.remove('open');
+            overlay.classList.remove('show');
+        }
+
+        function toggleMachineDetails(button) {
+            const detailsCard = button.nextElementSibling;
+            const taskCard = button.closest('.task-card');
+            const isExpanding = !button.classList.contains('expanded');
+
+            // Close all other expanded details
+            if (isExpanding) {
+                document.querySelectorAll('.expand-button.expanded').forEach(btn => {
+                    if (btn !== button) {
+                        btn.classList.remove('expanded');
+                        btn.nextElementSibling.classList.remove('expanded');
+                        btn.closest('.task-card').classList.remove('has-expanded');
+                    }
+                });
+            }
+
+            button.classList.toggle('expanded');
+            detailsCard.classList.toggle('expanded');
+            taskCard.classList.toggle('has-expanded');
+        }
+
+        // Initial render
+        populateMachineFilter(today);
+        renderTasks(today);
+
+        // Date change handler
+        dateInput.addEventListener('change', (e) => {
+            populateMachineFilter(e.target.value);
+            renderTasks(e.target.value, machineSelect.value);
+        });
+
+        // Machine filter change handler
+        machineSelect.addEventListener('change', (e) => {
+            renderTasks(dateInput.value, e.target.value);
+        });
+    </script>
+</body>
+</html>

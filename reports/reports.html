@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Production Report</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #333;
+        }
+
+        .filters {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            min-width: 200px;
+        }
+
+        .filter-group label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #555;
+        }
+
+        .filter-group select {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .status-container {
+            display: flex;
+            gap: 20px;
+            overflow-x: auto;
+            padding-bottom: 20px;
+        }
+
+        .status-column {
+            flex: 1;
+            min-width: 300px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 15px;
+        }
+
+        .status-header {
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            color: white;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .pending { background-color: #ff9800; }
+        .in-progress { background-color: #2196f3; }
+        .completed { background-color: #4caf50; }
+        .on-hold { background-color: #f44336; }
+
+        .order-card {
+            background: #f9f9f9;
+            border-left: 4px solid #2196f3;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .order-id {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .order-details {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .plant, .process {
+            display: inline-block;
+            background: #e0e0e0;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 12px;
+            margin-right: 5px;
+            margin-top: 5px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .status-container {
+                flex-direction: column;
+            }
+            
+            .status-column {
+                min-width: 100%;
+            }
+            
+            .filters {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .filter-group {
+                min-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Production Report Dashboard</h1>
+        <p>Real-time production status and order tracking</p>
+    </div>
+
+    <div class="filters">
+        <div class="filter-group">
+            <label for="plant-filter">Plant</label>
+            <select id="plant-filter">
+                <option value="all">All Plants</option>
+                <option value="plant-a">Plant A</option>
+                <option value="plant-b">Plant B</option>
+                <option value="plant-c">Plant C</option>
+            </select>
+        </div>
+        
+        <div class="filter-group">
+            <label for="process-filter">Process</label>
+            <select id="process-filter">
+                <option value="all">All Processes</option>
+                <option value="assembly">Assembly</option>
+                <option value="welding">Welding</option>
+                <option value="painting">Painting</option>
+                <option value="packing">Packing</option>
+            </select>
+        </div>
+        
+        <div class="filter-group">
+            <label for="status-filter">Status</label>
+            <select id="status-filter">
+                <option value="all">All Status</option>
+                <option value="pending">Pending</option>
+                <option value="in-progress">In Progress</option>
+                <option value="completed">Completed</option>
+                <option value="on-hold">On Hold</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="status-container">
+        <!-- Pending Column -->
+        <div class="status-column">
+            <div class="status-header pending">Pending</div>
+            <div class="order-card">
+                <div class="order-id">ORD-2024-001</div>
+                <div class="order-details">Product: Engine Assembly</div>
+                <div class="order-details">Quantity: 50 units</div>
+                <div class="plant">Plant A</div>
+                <div class="process">Assembly</div>
+            </div>
+            <div class="order-card">
+                <div class="order-id">ORD-2024-003</div>
+                <div class="order-details">Product: Gear Box</div>
+                <div class="order-details">Quantity: 30 units</div>
+                <div class="plant">Plant B</div>
+                <div class="process">Welding</div>
+            </div>
+        </div>
+
+        <!-- In Progress Column -->
+        <div class="status-column">
+            <div class="status-header in-progress">In Progress</div>
+            <div class="order-card">
+                <div class="order-id">ORD-2024-002</div>
+                <div class="order-details">Product: Chassis Frame</div>
+                <div class="order-details">Quantity: 20 units</div>
+                <div class="plant">Plant A</div>
+                <div class="process">Welding</div>
+            </div>
+            <div class="order-card">
+                <div class="order-id">ORD-2024-004</div>
+                <div class="order-details">Product: Body Panel</div>
+                <div class="order-details">Quantity: 100 units</div>
+                <div class="plant">Plant C</div>
+                <div class="process">Painting</div>
+            </div>
+        </div>
+
+        <!-- Completed Column -->
+        <div class="status-column">
+            <div class="status-header completed">Completed</div>
+            <div class="order-card">
+                <div class="order-id">ORD-2023-125</div>
+                <div class="order-details">Product: Wheel Set</div>
+                <div class="order-details">Quantity: 200 units</div>
+                <div class="plant">Plant B</div>
+                <div class="process">Assembly</div>
+            </div>
+        </div>
+
+        <!-- On Hold Column -->
+        <div class="status-column">
+            <div class="status-header on-hold">On Hold</div>
+            <div class="order-card">
+                <div class="order-id">ORD-2024-005</div>
+                <div class="order-details">Product: Dashboard Module</div>
+                <div class="order-details">Quantity: 75 units</div>
+                <div class="plant">Plant A</div>
+                <div class="process">Assembly</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Basic filter functionality
+        document.querySelectorAll('.filter-group select').forEach(select => {
+            select.addEventListener('change', function() {
+                // This is where you would implement actual filtering logic
+                console.log('Filter changed:', this.id, this.value);
+                // In real application, you would filter the order cards here
+            });
+        });
+    </script>
+</body>
+</html>

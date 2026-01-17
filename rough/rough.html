@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Production Work Order</title>
+
+<script src="https://printjs-4de6.kxcdn.com/print.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',Tahoma,sans-serif;background:#f5f5f5;padding:20px}
+.container{max-width:1200px;margin:0 auto;background:#fff;padding:30px;box-shadow:0 2px 8px rgba(0,0,0,.1)}
+.print-button{text-align:center;margin-bottom:20px}
+.print-button button{background:#3498db;color:#fff;border:none;padding:12px 30px;font-size:16px;border-radius:5px;cursor:pointer}
+.print-button button:hover{background:#2980b9}
+.header{text-align:center;margin-bottom:15px}
+.company-info{color:#666;font-size:14px;margin-bottom:5px}
+.main-title{color:#2c3e50;font-size:28px;font-weight:bold;margin:15px 0}
+.wo-number{background:#fff;color:#2c3e50;padding:10px 25px;display:inline-block;border-radius:5px;font-size:16px;font-weight:bold;border:2px solid #2c3e50}
+.info-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin:15px 0 8px 0;border-top:3px solid #34495e;padding-top:12px}
+.info-section{border-bottom:3px solid #34495e;padding-bottom:10px}
+.section-header{color:#2c3e50;padding:6px 15px;font-weight:bold;font-size:14px;margin-bottom:10px;text-transform:uppercase;border-bottom:2px solid #2c3e50}
+.info-item{margin-bottom:8px}
+.info-label{font-weight:600;color:#34495e;font-size:14px}
+.info-value{color:#333;font-size:14px;margin-top:3px}
+.priority-high{color:#e74c3c;font-weight:bold}
+.status-planned{color:#f39c12;font-weight:bold}
+.table-section{margin:15px 0 10px 0;page-break-inside:avoid}
+.table-title{color:#2c3e50;padding:8px 15px;font-weight:bold;font-size:15px;text-transform:uppercase;border-bottom:2px solid #2c3e50}
+table{width:100%;border-collapse:collapse;margin-bottom:15px}
+thead{background:#f5f5f5;color:#2c3e50}
+th{padding:8px;text-align:left;font-weight:600;font-size:14px;border-bottom:2px solid #2c3e50;color:#2c3e50}
+td{padding:8px;border-bottom:1px solid #e0e0e0;font-size:13px;color:#333}
+tbody tr:hover{background:#f9f9f9}
+.operation-details{line-height:1.6}
+.work-center{color:#555;font-size:13px}
+.duration-info{line-height:1.5}
+.memo-box{background:#ecf8ff;border-left:4px solid #3498db;padding:10px;margin-top:5px;font-size:14px;color:#333}
+.signature-section{display:grid;grid-template-columns:repeat(3,1fr);gap:30px;margin-top:15px;padding-top:10px;border-top:2px solid #e0e0e0}
+.signature-box{text-align:center}
+.signature-line{border-top:2px solid #333;margin-bottom:8px;padding-top:3px}
+.signature-label{color:#666;font-size:13px;font-weight:600}
+@media print{*{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}body{background:#fff!important;padding:0!important}.container{box-shadow:none!important;padding:15px!important;max-width:100%!important}.print-button{display:none!important}.info-grid,.memo-box,.table-section{page-break-inside:avoid!important}thead{display:table-header-group!important}tr{page-break-inside:avoid!important;page-break-after:auto!important}.signature-section{page-break-before:avoid!important}}
+@page{margin:1cm;size:A4}
+</style>
+</head>
+<body>
+<div class="container">
+<div class="print-button"><button onclick="printWorkOrder()">Print Work Order (Po - 123412)</button></div>
+<div id="printable-content">
+<div class="header">
+<div class="company-info" id="company-name"></div>
+<div class="company-info" id="company-address"></div>
+<h1 class="main-title">PRODUCTION WORK ORDER</h1>
+<div class="wo-number" id="wo-number"></div>
+</div>
+<div class="info-grid">
+<div class="info-section">
+<div class="section-header">Order Information</div>
+<div class="info-item"><div class="info-label">WO Number:</div><div class="info-value" id="wo-number-detail"></div></div>
+<div class="info-item"><div class="info-label">Priority:</div><div class="info-value priority-high" id="priority"></div></div>
+<div class="info-item"><div class="info-label">Customer Order:</div><div class="info-value" id="customer-order"></div></div>
+<div class="info-item"><div class="info-label">Promise Date:</div><div class="info-value" id="promise-date"></div></div>
+</div>
+<div class="info-section">
+<div class="section-header">Product Information</div>
+<div class="info-item"><div class="info-label">Product Code:</div><div class="info-value" id="product-code"></div></div>
+<div class="info-item"><div class="info-label">Description:</div><div class="info-value" id="product-description"></div></div>
+<div class="info-item"><div class="info-label">Quantity:</div><div class="info-value" id="product-quantity"></div></div>
+</div>
+<div class="info-section">
+<div class="section-header">Scheduling</div>
+<div class="info-item"><div class="info-label">Start Date:</div><div class="info-value" id="start-date"></div></div>
+<div class="info-item"><div class="info-label">Planned Finish:</div><div class="info-value" id="planned-finish"></div></div>
+<div class="info-item"><div class="info-label">Status:</div><div class="info-value status-planned" id="status"></div></div>
+</div>
+</div>
+<div class="table-section">
+<div class="table-title">Bill of Materials</div>
+<table><thead><tr><th>Item No.</th><th>Part Number</th><th>Description</th><th>Quantity</th><th>Unit</th><th>Status</th></tr></thead><tbody id="materials-body"></tbody></table>
+</div>
+<div class="table-section">
+<div class="table-title">Routing & Operations</div>
+<table><thead><tr><th>Op ID</th><th>Work Center</th><th>Details</th><th>Duration</th><th>Status</th></tr></thead><tbody id="operations-body"></tbody></table>
+</div>
+<div class="table-section">
+<div class="table-title">Special Instructions & Memos</div>
+<div id="memos-container"></div>
+</div>
+<div class="signature-section">
+<div class="signature-box"><div class="signature-line"></div><div class="signature-label">Prepared By<br>Production Planner</div></div>
+<div class="signature-box"><div class="signature-line"></div><div class="signature-label">Approved By<br>Production Manager</div></div>
+<div class="signature-box"><div class="signature-line"></div><div class="signature-label">Completed By<br>Shift Supervisor</div></div>
+</div>
+</div>
+</div>
+<script src="mockData.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded',function(){
+const d=MockData;
+document.getElementById('company-name').textContent=d.company.name;
+document.getElementById('company-address').textContent=d.company.address+' | Phone: '+d.company.phone;
+document.getElementById('wo-number').textContent=d.workOrder.woNumber;
+document.getElementById('wo-number-detail').textContent=d.workOrder.woNumber;
+document.getElementById('priority').textContent=d.workOrder.priority;
+document.getElementById('customer-order').textContent=d.workOrder.customerOrder;
+document.getElementById('promise-date').textContent=d.workOrder.promiseDate;
+document.getElementById('product-code').textContent=d.product.code;
+document.getElementById('product-description').textContent=d.product.description;
+document.getElementById('product-quantity').textContent=d.product.quantity;
+document.getElementById('start-date').textContent=d.scheduling.startDate;
+document.getElementById('planned-finish').textContent=d.scheduling.plannedFinish;
+document.getElementById('status').textContent=d.workOrder.status;
+document.getElementById('materials-body').innerHTML=d.materials.length?d.materials.map(m=>`<tr><td>${m.itemNo}</td><td>${m.partNumber}</td><td>${m.description}</td><td>${m.quantity}</td><td>${m.unit}</td><td>${m.status}</td></tr>`).join(''):'<tr><td colspan="6" style="text-align:center;color:#999;padding:20px">No materials specified</td></tr>';
+document.getElementById('operations-body').innerHTML=d.operations.map(o=>`<tr><td>${o.opId}</td><td class="work-center">${o.workCenter}</td><td class="operation-details"><strong>Opr:</strong> ${o.operation}<br><strong>Start:</strong> ${o.start}<br><strong>End:</strong> ${o.end}<br><strong>Qty:</strong> ${o.qty}</td><td class="duration-info"><strong>Running:</strong> ${o.running} mins<br><strong>COT:</strong> ${o.cot} mins</td><td class="status-planned">${o.status}</td></tr>`).join('');
+document.getElementById('memos-container').innerHTML=d.memos.map(m=>`<div class="memo-box"><strong>${m.author} [${m.timestamp}]:</strong> ${m.message}</div>`).join('');
+});
+function printWorkOrder(){
+printJS({printable:'printable-content',type:'html',targetStyles:['*'],scanStyles:false,documentTitle:'Work Order - '+MockData.workOrder.woNumber,
+style:`*{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}body{font-family:'Segoe UI',Tahoma,sans-serif;padding:0;margin:0}.header{text-align:center;margin-bottom:12px}.company-info{color:#666;font-size:14px;margin-bottom:4px}.main-title{color:#2c3e50;font-size:28px;font-weight:bold;margin:12px 0}.wo-number{background:#fff!important;color:#2c3e50!important;padding:8px 20px;display:inline-block;border-radius:5px;font-size:16px;font-weight:bold;border:2px solid #2c3e50!important}.info-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:15px;margin:12px 0 8px 0;border-top:3px solid #34495e;padding-top:10px;page-break-inside:avoid}.info-section{border-bottom:3px solid #34495e;padding-bottom:8px}.section-header{background:#fff!important;color:#2c3e50!important;padding:5px 12px;font-weight:bold;font-size:14px;margin-bottom:8px;text-transform:uppercase;border-bottom:2px solid #2c3e50!important}.info-item{margin-bottom:6px}.info-label{font-weight:600;color:#34495e;font-size:14px}.info-value{color:#333;font-size:14px;margin-top:2px}.priority-high{color:#e74c3c!important;font-weight:bold}.status-planned{color:#f39c12!important;font-weight:bold}.table-section{margin:8px 0 6px 0;page-break-inside:avoid!important}.table-title{background:#fff!important;color:#2c3e50!important;padding:6px 12px;font-weight:bold;font-size:15px;text-transform:uppercase;border-bottom:2px solid #2c3e50!important}.table-title:after{content:"";display:block;page-break-after:avoid!important}table{width:100%;border-collapse:collapse;margin-bottom:10px;page-break-before:avoid!important}thead{background:#fff!important;color:#2c3e50!important}th{padding:6px;text-align:left;font-weight:600;font-size:14px;border-bottom:2px solid #2c3e50!important;color:#2c3e50!important;background:#fff!important}td{padding:6px;border-bottom:1px solid #e0e0e0;font-size:13px;color:#333}tr{page-break-inside:avoid!important;page-break-after:auto!important}.operation-details{line-height:1.5}.work-center{color:#555;font-size:13px}.duration-info{line-height:1.4}.memo-box{background:#ecf8ff!important;border-left:4px solid #3498db!important;padding:8px;margin-top:4px;font-size:14px;color:#333}.signature-section{display:grid;grid-template-columns:repeat(3,1fr);gap:25px;margin-top:12px;padding-top:8px;border-top:2px solid #e0e0e0;page-break-before:avoid!important}.signature-box{text-align:center}.signature-line{border-top:2px solid #333;margin-bottom:6px;padding-top:2px;min-height:30px}.signature-label{color:#666;font-size:12px;font-weight:600}@page{margin:0.8cm;size:A4}`
+});}
+</script>
+</body>
+</html>
