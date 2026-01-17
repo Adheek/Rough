@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Production Report</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            padding: 20px;
+            background-color: #f5f5f5;
+            min-height: 100vh;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #333;
+        }
+
+        .filters {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            min-width: 200px;
+        }
+
+        .filter-group label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #555;
+        }
+
+        .filter-group select {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .status-wrapper {
+            width: 100%;
+            overflow-x: auto;
+            padding-bottom: 20px;
+        }
+
+        .status-container {
+            display: flex;
+            gap: 20px;
+            min-width: min-content;
+            height: calc(100vh - 250px);
+            min-height: 500px;
+        }
+
+        .status-column {
+            flex: 0 0 auto;
+            width: 320px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .status-header {
+            padding: 15px;
+            border-radius: 6px 6px 0 0;
+            color: white;
+            font-weight: bold;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+
+        .orders-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .order-card {
+            background: #f9f9f9;
+            border-left: 4px solid #2196f3;
+            padding: 15px;
+            border-radius: 4px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+            cursor: pointer;
+        }
+
+        .order-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 3px 6px rgba(0,0,0,0.15);
+        }
+
+        .order-id {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+
+        .order-details {
+            color: #666;
+            font-size: 13px;
+            margin-bottom: 5px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .tags-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-top: 8px;
+        }
+
+        .plant, .process, .priority {
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        .plant { background: #e3f2fd; color: #1565c0; }
+        .process { background: #f3e5f5; color: #7b1fa2; }
+        .priority-high { background: #ffebee; color: #c62828; }
+        .priority-medium { background: #fff3e0; color: #ef6c00; }
+        .priority-low { background: #e8f5e8; color: #2e7d32; }
+
+        /* Status color classes */
+        .status-pending { background-color: #ff9800; }
+        .status-in-progress { background-color: #2196f3; }
+        .status-completed { background-color: #4caf50; }
+        .status-on-hold { background-color: #f44336; }
+        .status-qa { background-color: #9c27b0; }
+        .status-shipped { background-color: #009688; }
+        .status-delayed { background-color: #795548; }
+        .status-cancelled { background-color: #607d8b; }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .status-container {
+                flex-direction: column;
+                height: auto;
+            }
+            
+            .status-column {
+                width: 100%;
+            }
+            
+            .filters {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .filter-group {
+                min-width: 100%;
+            }
+        }
+
+        /* Scrollbar styling */
+        .status-wrapper::-webkit-scrollbar,
+        .orders-container::-webkit-scrollbar {
+            height: 8px;
+            width: 8px;
+        }
+
+        .status-wrapper::-webkit-scrollbar-track,
+        .orders-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+
+        .status-wrapper::-webkit-scrollbar-thumb,
+        .orders-container::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 4px;
+        }
+
+        .status-wrapper::-webkit-scrollbar-thumb:hover,
+        .orders-container::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Production Report Dashboard</h1>
+        <p>Real-time production status and order tracking</p>
+    </div>
+
+    <div class="filters">
+        <div class="filter-group">
+            <label for="plant-filter">Plant</label>
+            <select id="plant-filter">
+                <option value="all">All Plants</option>
+                <option value="plant-a">Plant A</option>
+                <option value="plant-b">Plant B</option>
+                <option value="plant-c">Plant C</option>
+            </select>
+        </div>
+        
+        <div class="filter-group">
+            <label for="process-filter">Process</label>
+            <select id="process-filter">
+                <option value="all">All Processes</option>
+                <option value="assembly">Assembly</option>
+                <option value="welding">Welding</option>
+                <option value="painting">Painting</option>
+                <option value="packing">Packing</option>
+            </select>
+        </div>
+        
+        <div class="filter-group">
+            <label for="status-filter">Status</label>
+            <select id="status-filter">
+                <option value="all">All Status</option>
+                <!-- Status options will be dynamically populated -->
+            </select>
+        </div>
+    </div>
+
+    <div class="status-wrapper">
+        <div class="status-container" id="statusContainer">
+            <!-- Status columns will be dynamically generated here -->
+        </div>
+    </div>
+
+    <script>
+        // Sample data - in real application, this would come from API
+        const statuses = [
+            { id: 'pending', name: 'Pending', color: '#ff9800', order: 1 },
+            { id: 'in-progress', name: 'In Progress', color: '#2196f3', order: 2 },
+            { id: 'qa', name: 'Quality Check', color: '#9c27b0', order: 3 },
+            { id: 'on-hold', name: 'On Hold', color: '#f44336', order: 4 },
+            { id: 'completed', name: 'Completed', color: '#4caf50', order: 5 },
+            { id: 'shipped', name: 'Shipped', color: '#009688', order: 6 },
+            { id: 'delayed', name: 'Delayed', color: '#795548', order: 7 },
+            { id: 'cancelled', name: 'Cancelled', color: '#607d8b', order: 8 }
+        ];
+
+        const orders = [
+            { id: 'ORD-2024-001', product: 'Engine Assembly', quantity: 50, plant: 'Plant A', process: 'Assembly', status: 'pending', priority: 'high' },
+            { id: 'ORD-2024-002', product: 'Chassis Frame', quantity: 20, plant: 'Plant A', process: 'Welding', status: 'in-progress', priority: 'medium' },
+            { id: 'ORD-2024-003', product: 'Gear Box', quantity: 30, plant: 'Plant B', process: 'Welding', status: 'pending', priority: 'low' },
+            { id: 'ORD-2024-004', product: 'Body Panel', quantity: 100, plant: 'Plant C', process: 'Painting', status: 'qa', priority: 'high' },
+            { id: 'ORD-2024-005', product: 'Dashboard Module', quantity: 75, plant: 'Plant A', process: 'Assembly', status: 'on-hold', priority: 'medium' },
+            { id: 'ORD-2023-125', product: 'Wheel Set', quantity: 200, plant: 'Plant B', process: 'Assembly', status: 'completed', priority: 'low' },
+            { id: 'ORD-2024-006', product: 'Exhaust System', quantity: 40, plant: 'Plant C', process: 'Welding', status: 'shipped', priority: 'medium' },
+            { id: 'ORD-2024-007', product: 'Electrical Harness', quantity: 120, plant: 'Plant A', process: 'Assembly', status: 'delayed', priority: 'high' },
+            { id: 'ORD-2024-008', product: 'Suspension Kit', quantity: 60, plant: 'Plant B', process: 'Assembly', status: 'cancelled', priority: 'low' },
+            { id: 'ORD-2024-009', product: 'Brake System', quantity: 80, plant: 'Plant C', process: 'Assembly', status: 'in-progress', priority: 'high' },
+            { id: 'ORD-2024-010', product: 'Fuel Tank', quantity: 45, plant: 'Plant A', process: 'Welding', status: 'qa', priority: 'medium' }
+        ];
+
+        // Populate status filter dropdown
+        const statusFilter = document.getElementById('status-filter');
+        statuses.forEach(status => {
+            const option = document.createElement('option');
+            option.value = status.id;
+            option.textContent = status.name;
+            statusFilter.appendChild(option);
+        });
+
+        // Generate status columns
+        function generateStatusColumns() {
+            const container = document.getElementById('statusContainer');
+            container.innerHTML = '';
+            
+            // Sort statuses by order
+            const sortedStatuses = [...statuses].sort((a, b) => a.order - b.order);
+            
+            sortedStatuses.forEach(status => {
+                // Filter orders for this status
+                const statusOrders = orders.filter(order => order.status === status.id);
+                
+                // Create column
+                const column = document.createElement('div');
+                column.className = 'status-column';
+                column.innerHTML = `
+                    <div class="status-header status-${status.id}">
+                        ${status.name} (${statusOrders.length})
+                    </div>
+                    <div class="orders-container" id="orders-${status.id}">
+                        ${statusOrders.length > 0 ? 
+                            statusOrders.map(order => createOrderCard(order)).join('') :
+                            '<div style="text-align: center; color: #999; padding: 20px;">No orders</div>'
+                        }
+                    </div>
+                `;
+                
+                container.appendChild(column);
+            });
+        }
+
+        // Create order card HTML
+        function createOrderCard(order) {
+            return `
+                <div class="order-card" data-order-id="${order.id}" data-status="${order.status}">
+                    <div class="order-id">${order.id}</div>
+                    <div class="order-details">
+                        <span>${order.product}</span>
+                        <span>${order.quantity} units</span>
+                    </div>
+                    <div class="order-details">
+                        <span>${new Date().toLocaleDateString()}</span>
+                        <span class="priority priority-${order.priority}">${order.priority.toUpperCase()}</span>
+                    </div>
+                    <div class="tags-container">
+                        <span class="plant">${order.plant}</span>
+                        <span class="process">${order.process}</span>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Filter functionality
+        function applyFilters() {
+            const plantFilter = document.getElementById('plant-filter').value;
+            const processFilter = document.getElementById('process-filter').value;
+            const statusFilterVal = document.getElementById('status-filter').value;
+            
+            const filteredOrders = orders.filter(order => {
+                // Plant filter
+                if (plantFilter !== 'all' && order.plant.toLowerCase() !== plantFilter.replace('-', ' ')) {
+                    return false;
+                }
+                
+                // Process filter
+                if (processFilter !== 'all' && order.process.toLowerCase() !== processFilter) {
+                    return false;
+                }
+                
+                // Status filter
+                if (statusFilterVal !== 'all' && order.status !== statusFilterVal) {
+                    return false;
+                }
+                
+                return true;
+            });
+            
+            // Update display based on filters
+            if (statusFilterVal === 'all') {
+                // Show all statuses but filter orders within them
+                updateAllColumns(filteredOrders);
+            } else {
+                // Show only filtered status column
+                showSingleStatus(statusFilterVal, filteredOrders);
+            }
+        }
+
+        // Update all columns with filtered orders
+        function updateAllColumns(filteredOrders) {
+            statuses.forEach(status => {
+                const columnOrders = filteredOrders.filter(order => order.status === status.id);
+                const ordersContainer = document.getElementById(`orders-${status.id}`);
+                
+                if (ordersContainer) {
+                    const header = ordersContainer.previousElementSibling;
+                    header.textContent = `${status.name} (${columnOrders.length})`;
+                    
+                    ordersContainer.innerHTML = columnOrders.length > 0 ? 
+                        columnOrders.map(order => createOrderCard(order)).join('') :
+                        '<div style="text-align: center; color: #999; padding: 20px;">No orders</div>';
+                }
+            });
+        }
+
+        // Show only one status column
+        function showSingleStatus(statusId, filteredOrders) {
+            const container = document.getElementById('statusContainer');
+            container.innerHTML = '';
+            
+            const status = statuses.find(s => s.id === statusId);
+            if (!status) return;
+            
+            const column = document.createElement('div');
+            column.className = 'status-column';
+            column.innerHTML = `
+                <div class="status-header status-${status.id}">
+                    ${status.name} (${filteredOrders.length})
+                </div>
+                <div class="orders-container">
+                    ${filteredOrders.length > 0 ? 
+                        filteredOrders.map(order => createOrderCard(order)).join('') :
+                        '<div style="text-align: center; color: #999; padding: 20px;">No orders</div>'
+                    }
+                </div>
+            `;
+            
+            container.appendChild(column);
+        }
+
+        // Add event listeners to filters
+        document.querySelectorAll('.filter-group select').forEach(select => {
+            select.addEventListener('change', applyFilters);
+        });
+
+        // Initialize the dashboard
+        generateStatusColumns();
+
+        // Optional: Add drag and drop between columns
+        let draggedOrder = null;
+
+        document.addEventListener('dragstart', (e) => {
+            if (e.target.classList.contains('order-card')) {
+                draggedOrder = e.target;
+                e.target.style.opacity = '0.5';
+            }
+        });
+
+        document.addEventListener('dragend', (e) => {
+            if (draggedOrder) {
+                draggedOrder.style.opacity = '1';
+                draggedOrder = null;
+            }
+        });
+
+        document.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            if (e.target.classList.contains('orders-container')) {
+                e.target.style.backgroundColor = '#f0f0f0';
+            }
+        });
+
+        document.addEventListener('dragleave', (e) => {
+            if (e.target.classList.contains('orders-container')) {
+                e.target.style.backgroundColor = '';
+            }
+        });
+
+        document.addEventListener('drop', (e) => {
+            e.preventDefault();
+            if (e.target.classList.contains('orders-container') && draggedOrder) {
+                e.target.appendChild(draggedOrder);
+                e.target.style.backgroundColor = '';
+                
+                // Update order status in data (in real app, send to server)
+                const newStatus = e.target.id.replace('orders-', '');
+                console.log(`Order ${draggedOrder.dataset.orderId} moved to ${newStatus}`);
+            }
+        });
+    </script>
+</body>
+</html>

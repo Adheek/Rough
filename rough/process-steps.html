@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Process Steps Management</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #fff; color: #333; height: 100vh; display: flex; flex-direction: column; }
+        .container { padding: 20px; flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+        .action-buttons { display: flex; gap: 10px; margin-bottom: 20px; }
+        .add-process-btn, .save-btn { background: #3b82f6; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 500; display: inline-flex; align-items: center; gap: 6px; transition: background 0.2s; }
+        .add-process-btn:hover, .save-btn:hover { background: #2563eb; }
+        .save-btn { background: #10b981; }
+        .save-btn:hover { background: #059669; }
+        .process-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; overflow-y: auto; flex: 1; align-content: start; }
+        .process-card { background: #f8fafc; border-radius: 8px; padding: 14px; box-shadow: 0 1px 2px rgba(0,0,0,0.08); transition: all 0.2s; cursor: pointer; border: 1px solid #e2e8f0; height: fit-content; align-self: start; }
+        .process-card:hover { box-shadow: 0 3px 8px rgba(0,0,0,0.12); transform: translateY(-1px); border-color: #3b82f6; }
+        .process-card-header { display: flex; justify-content: space-between; align-items: start; margin-bottom: 10px; }
+        .process-card h3 { font-size: 15px; color: #1e293b; margin-bottom: 4px; }
+        .process-card p { color: #64748b; font-size: 12px; line-height: 1.4; }
+        .process-stats { display: flex; gap: 8px; margin-top: 10px; padding-top: 10px; border-top: 1px solid #e2e8f0; flex-wrap: wrap; }
+        .stat-badge { display: inline-flex; padding: 3px 8px; border-radius: 10px; font-size: 11px; font-weight: 500; }
+        .badge-completed { background: #d1fae5; color: #065f46; }
+        .badge-progress { background: #dbeafe; color: #1e40af; }
+        .badge-pending { background: #f3f4f6; color: #374151; }
+        .process-actions { display: flex; gap: 4px; }
+        .card-icon-btn { background: #e2e8f0; border: none; width: 26px; height: 26px; border-radius: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; font-size: 12px; }
+        .card-icon-btn:hover { background: #cbd5e1; }
+        .card-icon-btn.seq-btn { width: auto; padding: 0 6px; font-size: 10px; font-weight: 600; gap: 4px; }
+        .card-icon-btn.seq-btn::before { content: '☐'; font-size: 14px; }
+        .card-icon-btn.seq-btn.active::before { content: '☑'; color: white; }
+        .card-icon-btn.seq-btn.active { background: #3b82f6; color: white; }
+        .card-icon-btn.seq-btn.active:hover { background: #2563eb; }
+        .drawer-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.3); z-index: 1000; opacity: 0; visibility: hidden; transition: all 0.3s; }
+        .drawer-overlay.active { opacity: 1; visibility: visible; }
+        .drawer { position: fixed; top: 0; right: -450px; width: 450px; height: 100vh; background: white; box-shadow: -3px 0 10px rgba(0,0,0,0.1); z-index: 1001; transition: right 0.3s ease-out; display: flex; flex-direction: column; }
+        .drawer.active { right: 0; }
+        .drawer-header { padding: 14px 16px; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; background: #f8fafc; }
+        .drawer-header-left { display: flex; align-items: center; gap: 12px; }
+        .drawer-header h2 { font-size: 16px; color: #1e293b; }
+        .add-step-btn { background: #10b981; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: 600; display: inline-flex; align-items: center; gap: 4px; transition: background 0.2s; }
+        .add-step-btn:hover { background: #059669; }
+        .close-drawer { background: none; border: none; font-size: 20px; cursor: pointer; color: #64748b; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; border-radius: 4px; transition: all 0.2s; }
+        .close-drawer:hover { background: #e2e8f0; color: #1e293b; }
+        .drawer-content { flex: 1; overflow-y: auto; padding: 12px; }
+        .step-list { display: flex; flex-direction: column; gap: 8px; }
+        .step-item { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 10px; cursor: grab; transition: all 0.2s; display: flex; align-items: center; gap: 8px; }
+        .step-item:hover { border-color: #3b82f6; background: #f1f5f9; }
+        .step-item.selected { border-color: #3b82f6; background: #eff6ff; }
+        .step-item.dragging { opacity: 0.5; cursor: grabbing; }
+        .drag-handle { color: #94a3b8; font-size: 16px; cursor: grab; user-select: none; }
+        .drag-handle:active { cursor: grabbing; }
+        .step-number { background: #3b82f6; color: white; width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 12px; flex-shrink: 0; }
+        .step-info { flex: 1; min-width: 0; }
+        .step-name { font-weight: 500; color: #1e293b; margin-bottom: 2px; font-size: 13px; }
+        .step-meta { font-size: 11px; color: #64748b; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .step-status { padding: 3px 8px; border-radius: 10px; font-size: 10px; font-weight: 500; flex-shrink: 0; }
+        .status-completed { background: #d1fae5; color: #065f46; }
+        .status-in-progress { background: #dbeafe; color: #1e40af; }
+        .status-pending { background: #f3f4f6; color: #374151; }
+        .step-tooltip { position: fixed; background: white; border-radius: 8px; padding: 0; width: 360px; max-height: 600px; overflow: hidden; display: none; flex-direction: column; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15); border: 1px solid #e2e8f0; z-index: 2500; }
+        .step-tooltip.active { display: flex; }
+        .step-tooltip-header { padding: 10px 12px; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; background: #f8fafc; }
+        .step-tooltip-header h3 { font-size: 13px; color: #1e293b; margin: 0; font-weight: 600; }
+        .close-tooltip { background: none; border: none; font-size: 18px; cursor: pointer; color: #64748b; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; border-radius: 4px; transition: all 0.2s; padding: 0; line-height: 1; }
+        .close-tooltip:hover { background: #e2e8f0; color: #1e293b; }
+        .step-tooltip-body { padding: 12px; overflow-y: auto; flex: 1; }
+        .form-group { margin-bottom: 10px; }
+        .form-group label { display: block; font-size: 11px; font-weight: 600; color: #475569; margin-bottom: 4px; }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 6px 8px; border: 1px solid #e2e8f0; border-radius: 4px; font-size: 12px; font-family: inherit; transition: border-color 0.2s; }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1); }
+        .form-group textarea { resize: vertical; min-height: 50px; }
+        .select-wrapper { position: relative; }
+        .select-search { width: 100%; padding: 6px 8px; border: 1px solid #e2e8f0; border-radius: 4px; font-size: 12px; font-family: inherit; background: white; cursor: text; }
+        .select-search:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1); }
+        .select-dropdown { position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid #cbd5e1; border-radius: 4px; max-height: 160px; overflow-y: auto; display: none; z-index: 1000; box-shadow: 0 4px 12px rgba(0,0,0,0.15); margin-top: 2px; }
+        .select-dropdown.active { display: block; }
+        .select-option { padding: 8px 12px; cursor: pointer; font-size: 12px; transition: background 0.2s; color: #1e293b; }
+        .select-option:hover { background: #f1f5f9; }
+        .select-option.selected { background: #eff6ff; color: #3b82f6; font-weight: 600; }
+        .select-option.hidden { display: none; }
+        .form-row { display: flex; gap: 8px; align-items: center; }
+        .form-row input { flex: 1; }
+        .form-row span { color: #64748b; font-size: 12px; font-weight: 600; }
+        .form-actions { display: flex; gap: 6px; margin-top: 12px; }
+        .btn { padding: 6px 12px; border: none; border-radius: 4px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+        .btn-primary { background: #3b82f6; color: white; }
+        .btn-primary:hover { background: #2563eb; }
+        .empty-state { text-align: center; padding: 40px 20px; color: #94a3b8; }
+        .empty-state svg { width: 48px; height: 48px; margin-bottom: 12px; }
+        .empty-state p { font-size: 13px; }
+        .drawer-content::-webkit-scrollbar, .step-tooltip-body::-webkit-scrollbar, .process-grid::-webkit-scrollbar, .select-dropdown::-webkit-scrollbar { width: 6px; }
+        .drawer-content::-webkit-scrollbar-track, .step-tooltip-body::-webkit-scrollbar-track, .process-grid::-webkit-scrollbar-track, .select-dropdown::-webkit-scrollbar-track { background: #f1f5f9; }
+        .drawer-content::-webkit-scrollbar-thumb, .step-tooltip-body::-webkit-scrollbar-thumb, .process-grid::-webkit-scrollbar-thumb, .select-dropdown::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+        .drawer-content::-webkit-scrollbar-thumb:hover, .step-tooltip-body::-webkit-scrollbar-thumb:hover, .process-grid::-webkit-scrollbar-thumb:hover, .select-dropdown::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        @media (max-width: 768px) { .drawer { width: 100%; right: -100%; } .process-grid { grid-template-columns: 1fr; } .step-tooltip { width: calc(100% - 20px); max-width: 360px; left: 10px !important; right: 10px; } }
+        @keyframes slideIn { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @keyframes slideOut { from { transform: translateY(0); opacity: 1; } to { transform: translateY(20px); opacity: 0; } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="action-buttons">
+            <button class="add-process-btn" onclick="addNewProcess()"><span>+</span> Add Process</button>
+            <button class="save-btn" onclick="saveAllData()"><span>💾</span> Save</button>
+        </div>
+        <div class="process-grid" id="processGrid"></div>
+    </div>
+
+    <div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
+    <div class="drawer" id="drawer">
+        <div class="drawer-header">
+            <div class="drawer-header-left">
+                <h2 id="drawerTitle">Process Steps</h2>
+                <button class="add-step-btn" onclick="addNewStep()"><span>+</span> Add Step</button>
+            </div>
+            <button class="close-drawer" onclick="closeDrawer()">×</button>
+        </div>
+        <div class="drawer-content" id="drawerContent">
+            <div class="step-list" id="stepList"></div>
+        </div>
+    </div>
+
+    <div class="step-tooltip" id="stepTooltip"></div>
+
+    <script>
+        const mockData = {
+            processes: [
+                { id: 1, name: "Process 1", description: "Primary manufacturing process", seq: false, steps: [
+                    { id: 1, name: "Initial Setup", status: "Completed", order: 1, tooltip: "Initial system setup", estimatedTime: "15 mins", assignee: "John Doe" },
+                    { id: 2, name: "Material Inspection", status: "Completed", order: 2, tooltip: "Check raw materials", estimatedTime: "10 mins", assignee: "Jane Smith" },
+                    { id: 3, name: "Pre-processing", status: "In Progress", order: 3, tooltip: "Prepare materials", estimatedTime: "20 mins", assignee: "John Doe" },
+                    { id: 4, name: "Assembly Phase 1", status: "Pending", order: 4, tooltip: "First assembly stage", estimatedTime: "30 mins", assignee: "Mike Johnson" }
+                ]},
+                { id: 2, name: "Process 2", description: "Secondary quality assurance process", seq: true, steps: [
+                    { id: 5, name: "Quality Check 1", status: "Completed", order: 1, tooltip: "Initial quality verification", estimatedTime: "15 mins", assignee: "Sarah Wilson" },
+                    { id: 6, name: "Assembly Phase 2", status: "Completed", order: 2, tooltip: "Second assembly stage", estimatedTime: "30 mins", assignee: "Mike Johnson" },
+                    { id: 7, name: "Heat Treatment", status: "In Progress", order: 3, tooltip: "Apply heat treatment", estimatedTime: "45 mins", assignee: "David Brown" }
+                ]},
+                { id: 3, name: "Process 3", description: "Advanced testing and validation", seq: false, steps: [
+                    { id: 8, name: "Cooling Period", status: "Completed", order: 1, tooltip: "Cool down phase", estimatedTime: "60 mins", assignee: "System" },
+                    { id: 9, name: "Surface Finishing", status: "In Progress", order: 2, tooltip: "Apply surface finish", estimatedTime: "25 mins", assignee: "Emily Davis" }
+                ]},
+                { id: 4, name: "Process 4", description: "Extended workflow demonstration steps", seq: false, steps: [
+                    { id: 10, name: "Quality Check 2", status: "Pending", order: 1, tooltip: "Second quality check", estimatedTime: "15 mins", assignee: "Sarah Wilson" },
+                    { id: 11, name: "Packaging Prep", status: "Pending", order: 2, tooltip: "Prepare for packaging", estimatedTime: "10 mins", assignee: "Tom Harris" },
+                    { id: 12, name: "Final Packaging", status: "Pending", order: 3, tooltip: "Complete packaging", estimatedTime: "20 mins", assignee: "Tom Harris" }
+                ]}
+            ]
+        };
+
+        let currentProcess = null, selectedStep = null, draggedElement = null;
+
+        document.addEventListener('click', e => {
+            const tooltip = document.getElementById('stepTooltip');
+            const stepItems = document.querySelectorAll('.step-item');
+            if (tooltip.classList.contains('active') && !tooltip.contains(e.target) && !Array.from(stepItems).some(item => item.contains(e.target))) closeStepTooltip();
+        });
+
+        function init() { renderProcesses(); }
+
+        function renderProcesses() {
+            const grid = document.getElementById('processGrid');
+            grid.innerHTML = '';
+            mockData.processes.forEach(process => {
+                const completed = process.steps.filter(s => s.status === 'Completed').length;
+                const inProgress = process.steps.filter(s => s.status === 'In Progress').length;
+                const total = process.steps.length;
+                const card = document.createElement('div');
+                card.className = 'process-card';
+                card.onclick = () => openDrawer(process);
+                card.innerHTML = `<div class="process-card-header"><div><h3>${process.name}</h3><p>${process.description}</p></div><div class="process-actions"><button class="card-icon-btn seq-btn ${process.seq ? 'active' : ''}" onclick="event.stopPropagation(); toggleSeq(${process.id})" title="Sequential">SEQ</button><button class="card-icon-btn" onclick="event.stopPropagation(); editProcess(${process.id})" title="Edit">✏️</button><button class="card-icon-btn" onclick="event.stopPropagation(); deleteProcess(${process.id})" title="Delete">🗑️</button><button class="card-icon-btn" onclick="event.stopPropagation(); saveProcess(${process.id})" title="Save">💾</button></div></div><div class="process-stats"><span class="stat-badge badge-completed">${completed} Completed</span><span class="stat-badge badge-progress">${inProgress} In Progress</span><span class="stat-badge badge-pending">${total - completed - inProgress} Pending</span></div>`;
+                grid.appendChild(card);
+            });
+        }
+
+        function openDrawer(process) { currentProcess = process; selectedStep = null; document.getElementById('drawerTitle').textContent = `${process.name} - Steps`; document.getElementById('drawerOverlay').classList.add('active'); document.getElementById('drawer').classList.add('active'); renderSteps(); }
+        function closeDrawer() { document.getElementById('drawerOverlay').classList.remove('active'); document.getElementById('drawer').classList.remove('active'); currentProcess = selectedStep = null; }
+
+        function renderSteps() {
+            const stepList = document.getElementById('stepList');
+            stepList.innerHTML = '';
+            if (!currentProcess || !currentProcess.steps.length) { stepList.innerHTML = `<div class="empty-state"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg><p>No steps added yet. Click "Add Step" to create one.</p></div>`; return; }
+            const sortedSteps = [...currentProcess.steps].sort((a, b) => a.order - b.order);
+            sortedSteps.forEach((step, index) => {
+                const stepItem = document.createElement('div');
+                stepItem.className = 'step-item';
+                stepItem.dataset.stepId = step.id;
+                stepItem.draggable = true;
+                const statusClass = step.status.toLowerCase().replace(' ', '-');
+                stepItem.innerHTML = `<span class="drag-handle">⋮⋮</span><div class="step-number">${index + 1}</div><div class="step-info"><div class="step-name">${step.name}</div><div class="step-meta">${step.assignee} • ${step.estimatedTime}</div></div><span class="step-status status-${statusClass}">${step.status}</span>`;
+                stepItem.onclick = e => { if (!e.target.classList.contains('drag-handle')) selectStep(step, stepItem); };
+                stepItem.ondragstart = e => handleDragStart(e, step);
+                stepItem.ondragover = e => handleDragOver(e);
+                stepItem.ondrop = e => handleDrop(e, step);
+                stepItem.ondragend = handleDragEnd;
+                stepList.appendChild(stepItem);
+            });
+        }
+
+        function handleDragStart(e, step) { draggedElement = e.currentTarget; e.currentTarget.classList.add('dragging'); e.dataTransfer.effectAllowed = 'move'; e.dataTransfer.setData('text/html', e.currentTarget.innerHTML); }
+        function handleDragOver(e) { if (e.preventDefault) e.preventDefault(); e.dataTransfer.dropEffect = 'move'; return false; }
+        function handleDrop(e, targetStep) { if (e.stopPropagation) e.stopPropagation(); if (!draggedElement) return false; const draggedStepId = parseInt(draggedElement.dataset.stepId); const draggedStep = currentProcess.steps.find(s => s.id === draggedStepId); if (draggedStep && draggedStep.id !== targetStep.id) { const tempOrder = draggedStep.order; draggedStep.order = targetStep.order; targetStep.order = tempOrder; renderSteps(); showNotification('Step order updated!'); } return false; }
+        function handleDragEnd(e) { if (draggedElement) { draggedElement.classList.remove('dragging'); draggedElement = null; } }
+
+        function selectStep(step, clickedElement) {
+            selectedStep = step;
+            document.querySelectorAll('.step-item').forEach(item => item.classList.remove('selected'));
+            clickedElement.classList.add('selected');
+            const stepTooltip = document.getElementById('stepTooltip');
+            const minsValue = step.estimatedTime ? step.estimatedTime.split(' ')[0] : '10';
+            stepTooltip.innerHTML = `<div class="step-tooltip-header"><h3>Edit Step Details</h3><button class="close-tooltip" onclick="closeStepTooltip()">×</button></div><div class="step-tooltip-body"><form onsubmit="saveStepDetails(event)"><div class="form-group"><label>Step Name</label><input type="text" id="stepName" value="${step.name}" required placeholder="Enter step name"></div><div class="form-group"><label>Description</label><textarea id="stepDescription" required placeholder="Enter step description">${step.tooltip || ''}</textarea></div><div class="form-group"><label>Time</label><div class="form-row"><input type="number" id="stepMins" value="${minsValue}" required placeholder="Mins" min="1"><span>/</span><input type="number" id="stepQty" value="5" required placeholder="Qty" min="1"></div></div><div class="form-group"><label>Status</label><div class="select-wrapper"><input type="text" class="select-search" id="statusSearch" placeholder="Search or select status..." value="${step.status}" autocomplete="off"><div class="select-dropdown" id="statusDropdown"><div class="select-option" data-value="Pending">Pending</div><div class="select-option" data-value="In Progress">In Progress</div><div class="select-option" data-value="Completed">Completed</div><div class="select-option" data-value="Blocked">Blocked</div><div class="select-option" data-value="On Hold">On Hold</div><div class="select-option" data-value="Cancelled">Cancelled</div><div class="select-option" data-value="Review">Review</div></div><input type="hidden" id="stepStatus" value="${step.status}" required></div></div><div class="form-group"><label>Machine Type</label><div class="select-wrapper"><input type="text" class="select-search" id="machineSearch" placeholder="Search or select machine type..." value="${step.assignee}" autocomplete="off"><div class="select-dropdown" id="machineDropdown"><div class="select-option" data-value="Shoes Mass. Prod Line machine 2">Shoes Mass. Prod Line machine 2</div><div class="select-option" data-value="Shoes Mass. Prod Line23">Shoes Mass. Prod Line23</div><div class="select-option" data-value="Shoes Mass. Prod Line45">Shoes Mass. Prod Line45</div><div class="select-option" data-value="Assembly Line A">Assembly Line A</div><div class="select-option" data-value="Assembly Line B">Assembly Line B</div><div class="select-option" data-value="Assembly Line C">Assembly Line C</div><div class="select-option" data-value="Quality Control Station">Quality Control Station</div><div class="select-option" data-value="Quality Control Station 2">Quality Control Station 2</div><div class="select-option" data-value="Packaging Unit">Packaging Unit</div><div class="select-option" data-value="Packaging Unit 2">Packaging Unit 2</div><div class="select-option" data-value="Testing Station A">Testing Station A</div><div class="select-option" data-value="Testing Station B">Testing Station B</div></div><input type="hidden" id="stepMachineType" value="${step.assignee}" required></div></div><div class="form-actions"><button type="submit" class="btn btn-primary" style="flex: 1;">Confirm</button></div></form></div>`;
+            const rect = clickedElement.getBoundingClientRect();
+            let left = rect.right + 10, top = rect.top;
+            if (left + 360 > window.innerWidth) left = rect.left - 360 - 10;
+            if (top + 600 > window.innerHeight) top = window.innerHeight - 600 - 10;
+            if (top < 10) top = 10;
+            stepTooltip.style.left = `${left}px`;
+            stepTooltip.style.top = `${top}px`;
+            stepTooltip.classList.add('active');
+            setTimeout(() => { initializeSearchableSelect('statusSearch', 'statusDropdown', 'stepStatus'); initializeSearchableSelect('machineSearch', 'machineDropdown', 'stepMachineType'); }, 50);
+        }
+
+        function initializeSearchableSelect(searchId, dropdownId, hiddenInputId) {
+            const searchInput = document.getElementById(searchId), dropdown = document.getElementById(dropdownId), hiddenInput = document.getElementById(hiddenInputId);
+            if (!searchInput || !dropdown || !hiddenInput) return;
+            searchInput.addEventListener('focus', () => { dropdown.classList.add('active'); filterOptions(searchInput.value, dropdown); });
+            searchInput.addEventListener('input', function() { const searchTerm = this.value.toLowerCase(); filterOptions(searchTerm, dropdown); hiddenInput.value = this.value; });
+            dropdown.querySelectorAll('.select-option').forEach(option => {
+                option.addEventListener('click', function() { const value = this.dataset.value; searchInput.value = value; hiddenInput.value = value; dropdown.classList.remove('active'); dropdown.querySelectorAll('.select-option').forEach(opt => opt.classList.remove('selected')); this.classList.add('selected'); });
+                if (option.dataset.value === hiddenInput.value) option.classList.add('selected');
+            });
+            document.addEventListener('click', e => { if (!searchInput.contains(e.target) && !dropdown.contains(e.target)) dropdown.classList.remove('active'); });
+        }
+
+        function filterOptions(searchTerm, dropdown) { const options = dropdown.querySelectorAll('.select-option'); let hasVisibleOptions = false; options.forEach(option => { const text = option.textContent.toLowerCase(); if (text.includes(searchTerm)) { option.classList.remove('hidden'); hasVisibleOptions = true; } else option.classList.add('hidden'); }); if (hasVisibleOptions) dropdown.classList.add('active'); }
+        function closeStepTooltip() { document.getElementById('stepTooltip').classList.remove('active'); document.querySelectorAll('.step-item').forEach(item => item.classList.remove('selected')); selectedStep = null; }
+
+        function saveStepDetails(event) { event.preventDefault(); if (!selectedStep) return; selectedStep.name = document.getElementById('stepName').value; selectedStep.tooltip = document.getElementById('stepDescription').value; selectedStep.status = document.getElementById('stepStatus').value; selectedStep.assignee = document.getElementById('stepMachineType').value; selectedStep.estimatedTime = document.getElementById('stepMins').value + ' mins'; closeStepTooltip(); renderSteps(); renderProcesses(); showNotification('Step updated successfully!'); }
+        function addNewStep() { if (!currentProcess) return; const newStep = { id: Date.now(), name: `New Step ${currentProcess.steps.length + 1}`, status: 'Pending', order: currentProcess.steps.length + 1, tooltip: 'Step description', estimatedTime: '10 mins', assignee: 'Assembly Line A' }; currentProcess.steps.push(newStep); renderSteps(); renderProcesses(); showNotification('New step added!'); }
+        function saveAllData() { console.log('Saving all data:', mockData); showNotification('All data saved successfully!'); }
+
+        function showNotification(message) { const toast = document.createElement('div'); toast.style.cssText = 'position: fixed; bottom: 20px; right: 20px; background: #10b981; color: white; padding: 12px 20px; border-radius: 6px; font-size: 13px; font-weight: 500; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 10000; animation: slideIn 0.3s ease-out;'; toast.textContent = message; document.body.appendChild(toast); setTimeout(() => { toast.style.animation = 'slideOut 0.3s ease-out'; setTimeout(() => toast.remove(), 300); }, 2000); }
+        function toggleSeq(processId) { const process = mockData.processes.find(p => p.id === processId); if (process) { process.seq = !process.seq; renderProcesses(); showNotification(process.seq ? 'Sequential mode enabled' : 'Sequential mode disabled'); } }
+        function addNewProcess() { const newId = Math.max(...mockData.processes.map(p => p.id)) + 1; const newProcess = { id: newId, name: `Process ${newId}`, description: `New process ${newId} description`, seq: false, steps: [] }; mockData.processes.push(newProcess); renderProcesses(); showNotification('New process added!'); }
+        function editProcess(processId) { const process = mockData.processes.find(p => p.id === processId); if (process) { const newName = prompt('Enter new process name:', process.name); if (newName) { process.name = newName; renderProcesses(); showNotification('Process updated!'); } } }
+        function deleteProcess(processId) { if (confirm('Are you sure you want to delete this process?')) { const index = mockData.processes.findIndex(p => p.id === processId); if (index > -1) { mockData.processes.splice(index, 1); renderProcesses(); showNotification('Process deleted!'); } } }
+        function saveProcess(processId) { const process = mockData.processes.find(p => p.id === processId); if (process) { console.log('Saving process:', process); showNotification(`${process.name} saved successfully!`); } }
+
+        init();
+    </script>
+</body>
+</html>

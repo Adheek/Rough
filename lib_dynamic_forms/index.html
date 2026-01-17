@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic Forms Library - Demo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #e8eaed;
+            min-height: 100vh;
+            padding: 0;
+            margin: 0;
+        }
+
+        .ntt-header {
+            background: #4a5f7a;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .ntt-logo {
+            color: white;
+            font-size: 20px;
+            font-weight: 600;
+            letter-spacing: 2px;
+        }
+
+        .ntt-header-icons {
+            display: flex;
+            gap: 20px;
+            color: white;
+            font-size: 20px;
+        }
+
+        .ntt-header-icons span {
+            cursor: pointer;
+            opacity: 0.8;
+            transition: opacity 0.2s;
+        }
+
+        .ntt-header-icons span:hover {
+            opacity: 1;
+        }
+
+        .main-container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #2d3748;
+            text-align: left;
+            margin-bottom: 30px;
+            font-size: 1.75em;
+            font-weight: 500;
+            padding: 10px 0;
+        }
+
+        .demo-section {
+            background: white;
+            border-radius: 4px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            border-left: 4px solid #1976d2;
+        }
+
+        .demo-section h2 {
+            color: #2d3748;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #e2e8f0;
+            font-size: 1.25em;
+            font-weight: 500;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 10px 24px;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary {
+            background: #1976d2;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #1565c0;
+            box-shadow: 0 2px 4px rgba(25, 118, 210, 0.4);
+        }
+
+        .btn-success {
+            background: #10b981;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #059669;
+            box-shadow: 0 2px 4px rgba(16, 185, 129, 0.4);
+        }
+
+        .btn-secondary {
+            background: #64748b;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #475569;
+            box-shadow: 0 2px 4px rgba(100, 116, 139, 0.4);
+        }
+
+        /* Form Builder Styles */
+        .df-builder-layout {
+            display: flex;
+            gap: 20px;
+            height: 600px;
+        }
+
+        .df-controls-panel {
+            flex: 0 0 280px;
+            background: #4a5f7a;
+            border-radius: 4px;
+            padding: 20px;
+            border: none;
+            height: 600px;
+            max-height: 600px;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        .df-controls-panel::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .df-controls-panel::-webkit-scrollbar-track {
+            background: #3a4f6a;
+            border-radius: 4px;
+        }
+
+        .df-controls-panel::-webkit-scrollbar-thumb {
+            background: #5a7f9a;
+            border-radius: 4px;
+        }
+
+        .df-controls-panel::-webkit-scrollbar-thumb:hover {
+            background: #6a8faa;
+        }
+
+        .df-controls-panel h3 {
+            color: #ffffff;
+            margin-bottom: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .df-field-button {
+            background: #5a6f8a;
+            border: 1px solid #6a7f9a;
+            border-radius: 4px;
+            padding: 12px 15px;
+            margin-bottom: 8px;
+            cursor: move;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #ffffff;
+            font-size: 13px;
+        }
+
+        .df-field-button:hover {
+            background: #1976d2;
+            border-color: #1976d2;
+            transform: translateX(3px);
+        }
+
+        .df-icon {
+            font-size: 20px;
+        }
+
+        .df-canvas {
+            flex: 1;
+            background: #fafafa;
+            border: 2px dashed #cbd5e0;
+            border-radius: 4px;
+            padding: 12px;
+            height: 600px;
+            max-height: 600px;
+            overflow-y: auto;
+            overflow-x: hidden;
+            transition: all 0.3s;
+        }
+
+        .df-canvas.df-drag-over {
+            border-color: #1976d2;
+            background: #e3f2fd;
+        }
+
+        .df-canvas-placeholder {
+            text-align: center;
+            color: #94a3b8;
+            padding: 40px 20px;
+            font-size: 14px;
+        }
+
+        .df-field-wrapper {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-left: 3px solid #1976d2;
+            border-radius: 4px;
+            padding: 8px 12px;
+            margin-bottom: 8px;
+            transition: all 0.2s;
+        }
+
+        .df-field-wrapper:hover {
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            border-left-color: #f57c00;
+        }
+
+        .df-field-wrapper.dragging {
+            opacity: 0.5;
+            border-left-color: #f57c00;
+        }
+
+        .df-field-wrapper.drag-over {
+            border-top: 3px solid #1976d2;
+            margin-top: 15px;
+        }
+
+        .df-canvas::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .df-canvas::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+
+        .df-canvas::-webkit-scrollbar-thumb {
+            background: #94a3b8;
+            border-radius: 4px;
+        }
+
+        .df-canvas::-webkit-scrollbar-thumb:hover {
+            background: #64748b;
+        }
+
+        .df-field-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+            font-weight: 600;
+            font-size: 13px;
+            color: #2d3748;
+            cursor: move;
+            user-select: none;
+        }
+
+        .df-field-header::before {
+            content: "⋮⋮";
+            color: #94a3b8;
+            margin-right: 6px;
+            font-size: 14px;
+            line-height: 1;
+        }
+
+        .df-field-actions {
+            display: flex;
+            gap: 5px;
+            pointer-events: all;
+        }
+
+        .df-btn-icon {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            padding: 2px 6px;
+            border-radius: 3px;
+            transition: background 0.2s;
+            pointer-events: all;
+        }
+
+        .df-btn-icon:hover {
+            background: #e2e8f0;
+        }
+
+        .df-field-preview {
+            padding: 4px 0;
+            cursor: default;
+            pointer-events: none;
+        }
+
+        .df-field-preview label {
+            display: block;
+            margin-bottom: 3px;
+            color: #4a5568;
+            font-weight: 500;
+            font-size: 12px;
+        }
+
+        .df-field-preview input,
+        .df-field-preview textarea,
+        .df-field-preview select {
+            width: 100%;
+            padding: 6px 10px;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            font-size: 12px;
+            font-family: inherit;
+            background: #f9fafb;
+        }
+
+        .df-field-preview textarea {
+            resize: vertical;
+            min-height: 50px;
+        }
+
+        .df-field-preview h1,
+        .df-field-preview h2,
+        .df-field-preview h3 {
+            font-size: 14px;
+            margin: 0;
+        }
+
+        .df-field-preview p {
+            font-size: 12px;
+            margin: 0;
+        }
+
+        .df-option-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .df-option-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .df-option-item input {
+            width: auto;
+        }
+
+        .df-option-item label {
+            font-size: 12px;
+            margin: 0;
+        }
+
+        .df-field-description {
+            display: block;
+            margin-top: 3px;
+            color: #718096;
+            font-size: 11px;
+        }
+
+        /* Modal Styles */
+        .df-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .df-modal {
+            background: white;
+            border-radius: 4px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+        }
+
+        .df-modal-header {
+            padding: 20px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #f8f9fa;
+        }
+
+        .df-modal-header h3 {
+            margin: 0;
+            color: #2d3748;
+            font-size: 18px;
+            font-weight: 500;
+        }
+
+        .df-modal-close {
+            background: none;
+            border: none;
+            font-size: 28px;
+            cursor: pointer;
+            color: #718096;
+            line-height: 1;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+        }
+
+        .df-modal-close:hover {
+            color: #2d3748;
+        }
+
+        .df-modal-body {
+            padding: 20px;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .df-form-group {
+            margin-bottom: 15px;
+        }
+
+        .df-form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #4a5568;
+            font-weight: 500;
+        }
+
+        .df-form-group input,
+        .df-form-group textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            font-size: 14px;
+            font-family: inherit;
+            transition: border-color 0.2s;
+        }
+
+        .df-form-group input:focus,
+        .df-form-group textarea:focus {
+            outline: none;
+            border-color: #1976d2;
+            box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.1);
+        }
+
+        .df-form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .df-modal-footer {
+            padding: 20px;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        /* Renderer Styles */
+        .df-renderer {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+        }
+
+        .df-rendered-form {
+            max-width: 600px;
+        }
+
+        .df-rendered-field {
+            margin-bottom: 20px;
+        }
+
+        .df-rendered-field label {
+            display: block;
+            margin-bottom: 5px;
+            color: #2d3748;
+            font-weight: 500;
+        }
+
+        .df-rendered-field input:not([type="checkbox"]):not([type="radio"]),
+        .df-rendered-field textarea,
+        .df-rendered-field select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            font-size: 14px;
+            font-family: inherit;
+            transition: border-color 0.2s;
+            background: white;
+        }
+
+        .df-rendered-field input:focus,
+        .df-rendered-field textarea:focus,
+        .df-rendered-field select:focus {
+            outline: none;
+            border-color: #1976d2;
+            box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.1);
+        }
+
+        .df-rendered-field textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .df-rendered-field h1,
+        .df-rendered-field h2,
+        .df-rendered-field h3 {
+            color: #2d3748;
+            margin-bottom: 10px;
+        }
+
+        .df-rendered-field p {
+            color: #4a5568;
+            line-height: 1.6;
+        }
+
+        /* JSON Output */
+        #jsonOutput {
+            background: #2d3748;
+            color: #10b981;
+            padding: 20px;
+            border-radius: 4px;
+            overflow-x: auto;
+            font-size: 13px;
+            line-height: 1.6;
+            max-height: 400px;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            border: 1px solid #4a5568;
+        }
+
+        .actions-row {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .df-builder-layout {
+                flex-direction: column;
+            }
+
+            .df-controls-panel {
+                flex: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="ntt-header">
+        <div class="ntt-logo">NTT DATA</div>
+        <div class="ntt-header-icons">
+            <span title="Settings">⚙</span>
+            <span title="User">👤</span>
+        </div>
+    </div>
+
+    <div class="main-container">
+        <h1>Dynamic Forms Builder</h1>
+
+        <!-- Form Builder Section -->
+        <div class="demo-section">
+            <h2>1. Build Your Form</h2>
+            <div id="formBuilder"></div>
+            <div class="button-group">
+                <button class="btn btn-primary" id="saveBtn">Save Form JSON</button>
+                <button class="btn btn-success" id="loadSampleBtn">Load Sample Form</button>
+            </div>
+        </div>
+
+        <!-- JSON Output Section -->
+        <div class="demo-section">
+            <h2>2. Form JSON Output</h2>
+            <pre id="jsonOutput">Build a form above and click "Save Form JSON" to see the output here...</pre>
+            <div class="button-group">
+                <button class="btn btn-secondary" id="copyJsonBtn">Copy JSON</button>
+                <button class="btn btn-primary" id="downloadJsonBtn">Download JSON File</button>
+            </div>
+        </div>
+
+        <!-- Form Renderer Section -->
+        <div class="demo-section">
+            <h2>3. Rendered Form Preview</h2>
+            <div class="button-group">
+                <input type="file" id="uploadJsonFile" accept=".json" style="display: none;">
+                <button class="btn btn-success" id="uploadJsonBtn">Upload JSON File</button>
+                <button class="btn btn-primary" id="renderBtn">Render Saved Form</button>
+            </div>
+            <div id="formRender"></div>
+        </div>
+    </div>
+
+    <script src="dynamic_forms_v2.js"></script>
+    <script>
+        // Initialize Form Builder
+        let formBuilder;
+        let formRenderer;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Create form builder instance
+            formBuilder = new DynamicFormBuilder('#formBuilder', {
+                controlPosition: 'left',
+                showActionButtons: true,
+                disabledFields: []
+            });
+
+            // Save button handler
+            document.getElementById('saveBtn').addEventListener('click', function() {
+                const formJson = formBuilder.getData('json');
+                document.getElementById('jsonOutput').textContent = formJson;
+
+                // Save to localStorage
+                localStorage.setItem('customFormData', formJson);
+
+                alert('Form saved successfully!');
+            });
+
+            // Render button handler
+            document.getElementById('renderBtn').addEventListener('click', function() {
+                const savedForm = localStorage.getItem('customFormData');
+
+                if (!savedForm) {
+                    alert('No form saved yet! Build and save a form first.');
+                    return;
+                }
+
+                // Clear previous renderer
+                document.getElementById('formRender').innerHTML = '';
+
+                // Create new renderer
+                formRenderer = new DynamicFormRenderer('#formRender', {
+                    formData: savedForm,
+                    showSubmit: true,
+                    submitText: 'Submit Form',
+                    onSubmit: function(formData) {
+                        console.log('Form submitted:', formData);
+                        alert('Form submitted! Check console for data.');
+                        console.table(formData);
+                    }
+                });
+            });
+
+            // Load sample form
+            document.getElementById('loadSampleBtn').addEventListener('click', function() {
+                const sampleForm = [
+                    {
+                        "id": "field-1",
+                        "type": "header",
+                        "label": "Contact Form",
+                        "name": "field-1",
+                        "required": false,
+                        "placeholder": "",
+                        "description": "",
+                        "subtype": "h2"
+                    },
+                    {
+                        "id": "field-2",
+                        "type": "text",
+                        "label": "Full Name",
+                        "name": "fullName",
+                        "required": true,
+                        "placeholder": "Enter your full name",
+                        "description": "Please provide your first and last name"
+                    },
+                    {
+                        "id": "field-3",
+                        "type": "email",
+                        "label": "Email Address",
+                        "name": "email",
+                        "required": true,
+                        "placeholder": "you@example.com",
+                        "description": "We'll never share your email"
+                    },
+                    {
+                        "id": "field-4",
+                        "type": "select",
+                        "label": "Subject",
+                        "name": "subject",
+                        "required": true,
+                        "placeholder": "",
+                        "description": "",
+                        "options": ["General Inquiry", "Technical Support", "Sales", "Feedback"]
+                    },
+                    {
+                        "id": "field-5",
+                        "type": "textarea",
+                        "label": "Message",
+                        "name": "message",
+                        "required": true,
+                        "placeholder": "Type your message here...",
+                        "description": "Please provide as much detail as possible"
+                    },
+                    {
+                        "id": "field-6",
+                        "type": "checkbox",
+                        "label": "Preferred Contact Methods",
+                        "name": "contactMethods",
+                        "required": false,
+                        "placeholder": "",
+                        "description": "Select all that apply",
+                        "options": ["Email", "Phone", "Text Message"]
+                    },
+                    {
+                        "id": "field-7",
+                        "type": "radio",
+                        "label": "Priority Level",
+                        "name": "priority",
+                        "required": true,
+                        "placeholder": "",
+                        "description": "",
+                        "options": ["Low", "Medium", "High", "Urgent"]
+                    }
+                ];
+
+                formBuilder.setData(sampleForm);
+                alert('Sample form loaded! You can now edit it or save it.');
+            });
+
+            // Copy JSON button
+            document.getElementById('copyJsonBtn').addEventListener('click', function() {
+                const jsonText = document.getElementById('jsonOutput').textContent;
+
+                if (jsonText.includes('Build a form')) {
+                    alert('No JSON to copy yet!');
+                    return;
+                }
+
+                navigator.clipboard.writeText(jsonText).then(function() {
+                    alert('JSON copied to clipboard!');
+                }).catch(function(err) {
+                    console.error('Could not copy text: ', err);
+                });
+            });
+
+            // Download JSON to file button
+            document.getElementById('downloadJsonBtn').addEventListener('click', function() {
+                const jsonText = document.getElementById('jsonOutput').textContent;
+
+                if (jsonText.includes('Build a form')) {
+                    alert('No JSON to download yet! Build and save a form first.');
+                    return;
+                }
+
+                // Create a timestamp for the filename
+                const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, -5);
+                const filename = `form_${timestamp}.json`;
+
+                // Create a blob and download
+                const blob = new Blob([jsonText], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+
+                alert('JSON file downloaded: ' + filename + '\nSave it to the saved_forms folder!');
+            });
+
+            // Upload JSON file button
+            document.getElementById('uploadJsonBtn').addEventListener('click', function() {
+                document.getElementById('uploadJsonFile').click();
+            });
+
+            // Handle file upload
+            document.getElementById('uploadJsonFile').addEventListener('change', function(e) {
+                const file = e.target.files[0];
+
+                if (!file) return;
+
+                if (file.type !== 'application/json' && !file.name.endsWith('.json')) {
+                    alert('Please upload a valid JSON file!');
+                    return;
+                }
+
+                const reader = new FileReader();
+
+                reader.onload = function(event) {
+                    try {
+                        const jsonText = event.target.result;
+                        const jsonData = JSON.parse(jsonText);
+
+                        // Store in localStorage
+                        localStorage.setItem('customFormData', jsonText);
+
+                        // Display in output
+                        document.getElementById('jsonOutput').textContent = JSON.stringify(jsonData, null, 2);
+
+                        // Clear previous renderer
+                        document.getElementById('formRender').innerHTML = '';
+
+                        // Render the form automatically
+                        formRenderer = new DynamicFormRenderer('#formRender', {
+                            formData: jsonText,
+                            showSubmit: true,
+                            submitText: 'Submit Form',
+                            onSubmit: function(formData) {
+                                console.log('Form submitted:', formData);
+                                alert('Form submitted! Check console for data.');
+                                console.table(formData);
+                            }
+                        });
+
+                        alert('JSON file loaded and rendered successfully!');
+
+                        // Reset file input
+                        e.target.value = '';
+                    } catch (error) {
+                        alert('Error parsing JSON file: ' + error.message);
+                        console.error('JSON parse error:', error);
+                    }
+                };
+
+                reader.onerror = function() {
+                    alert('Error reading file!');
+                };
+
+                reader.readAsText(file);
+            });
+        });
+    </script>
+</body>
+</html>

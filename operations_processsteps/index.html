@@ -1,0 +1,969 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NTT DATA - Operations (Scrollable)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #e8edf2;
+        }
+
+        /* Header */
+        .header {
+            background: #3d5975;
+            color: white;
+            padding: 12px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 16px;
+        }
+
+        .logo {
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .operations-text {
+            font-weight: 400;
+            letter-spacing: 3px;
+        }
+
+        .header-right {
+            display: flex;
+            gap: 10px;
+        }
+
+        .icon-btn {
+            background: transparent;
+            border: none;
+            color: white;
+            padding: 6px 10px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .dimensions {
+            background: rgba(255,255,255,0.15);
+            padding: 5px 15px;
+            border-radius: 3px;
+            font-size: 13px;
+        }
+
+        /* Container */
+        .container {
+            padding: 0;
+            max-width: 100%;
+        }
+
+        /* Section Header */
+        .section-header {
+            background: white;
+            padding: 18px 30px;
+            border-left: 5px solid #3d5975;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        }
+
+        .section-title {
+            font-size: 17px;
+            font-weight: 600;
+            color: #2c3e50;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-machine-schedule {
+            background: white;
+            border: 1px solid #d0d0d0;
+            padding: 8px 22px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 13px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .btn-machine-schedule:hover {
+            background: #f8f8f8;
+        }
+
+        /* Filters */
+        .filters {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            background: white;
+            padding: 20px 30px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        }
+
+        .filter-group label {
+            display: block;
+            color: #5a5a5a;
+            font-size: 13px;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .filter-group select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            font-size: 14px;
+            color: #333;
+            background: white;
+            cursor: pointer;
+        }
+
+        /* Cards Grid */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 18px;
+            padding: 20px;
+        }
+
+        /* Work Order Card */
+        .work-order-card {
+            background: white;
+            border-radius: 0;
+            overflow: hidden;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+        }
+
+        .card-header {
+            background: #4d6580;
+            color: white;
+            padding: 11px 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-title {
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .card-badge {
+            background: white;
+            color: #333;
+            padding: 3px 9px;
+            border-radius: 2px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        /* Card Body */
+        .card-body {
+            padding: 14px;
+            background: #fafafa;
+        }
+
+        .operator-section {
+            margin-bottom: 12px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #e5e5e5;
+        }
+
+        .operator-label {
+            color: #333;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .operator-value {
+            color: #666;
+            font-size: 11px;
+            line-height: 1.4;
+        }
+
+        /* Info Grid */
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px 12px;
+            margin-bottom: 10px;
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .info-label {
+            color: #333;
+            font-size: 11px;
+            font-weight: 600;
+            margin-bottom: 3px;
+        }
+
+        .info-value {
+            color: #555;
+            font-size: 11px;
+        }
+
+        .info-value.green {
+            color: #27ae60;
+        }
+
+        /* Product Memo */
+        .product-memo-section {
+            margin: 10px 0;
+            padding-top: 8px;
+            border-top: 1px solid #e5e5e5;
+        }
+
+        .product-memo-label {
+            color: #3498db;
+            font-size: 11px;
+            font-weight: 600;
+            margin-bottom: 3px;
+        }
+
+        .product-memo-value {
+            color: #666;
+            font-size: 10px;
+            line-height: 1.4;
+        }
+
+        /* Status Progress - Scrollable */
+        .status-progress {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: 14px 0 8px 0;
+            position: relative;
+            padding: 0 5px;
+        }
+
+        .status-progress.many-steps {
+            justify-content: flex-start;
+            overflow-x: auto;
+            overflow-y: hidden;
+            padding: 5px 10px 10px 10px;
+            gap: 15px;
+        }
+
+        .status-progress.many-steps::-webkit-scrollbar {
+            height: 6px;
+        }
+
+        .status-progress.many-steps::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 3px;
+        }
+
+        .status-progress.many-steps::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 3px;
+        }
+
+        .status-progress.many-steps::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
+        .status-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        .status-progress.many-steps .status-step {
+            flex-shrink: 0;
+            min-width: 50px;
+        }
+
+        .status-number {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 4px;
+            border: 2px solid transparent;
+        }
+
+        .status-progress.many-steps .status-number {
+            width: 28px;
+            height: 28px;
+            font-size: 10px;
+        }
+
+        .status-step.completed .status-number {
+            background: #27ae60;
+            border-color: #27ae60;
+        }
+
+        .status-step.in-progress .status-number {
+            background: #3498db;
+            border-color: #3498db;
+        }
+
+        .status-step.pending .status-number {
+            background: #bdc3c7;
+            border-color: #bdc3c7;
+        }
+
+        .status-text {
+            font-size: 9px;
+            color: #666;
+            font-weight: 600;
+            text-transform: uppercase;
+            white-space: nowrap;
+            text-align: center;
+            max-width: 60px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .status-progress.many-steps .status-text {
+            font-size: 8px;
+            max-width: 50px;
+        }
+
+        .progress-line {
+            position: absolute;
+            top: 15px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #e0e0e0;
+            z-index: 1;
+        }
+
+        .status-progress.many-steps .progress-line {
+            display: none;
+        }
+
+        .status-counter {
+            position: absolute;
+            top: -5px;
+            right: 5px;
+            background: #3498db;
+            color: white;
+            font-size: 9px;
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-weight: 600;
+        }
+
+        /* View All Steps Button */
+        .view-all-steps-btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 3px;
+            font-size: 11px;
+            cursor: pointer;
+            width: 100%;
+            font-weight: 600;
+            transition: background 0.3s;
+            margin-top: 8px;
+            text-align: center;
+        }
+
+        .view-all-steps-btn:hover {
+            background: #2980b9;
+        }
+
+        /* View Details Link */
+        .view-details-link {
+            text-align: left;
+            margin-top: 10px;
+        }
+
+        .view-details {
+            color: #3498db;
+            text-decoration: none;
+            font-size: 11px;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .view-details:hover {
+            text-decoration: underline;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal.active {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 0;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 80vh;
+            display: flex;
+            flex-direction: column;
+            animation: slideIn 0.3s;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .modal-header {
+            padding: 20px 25px;
+            border-bottom: 2px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 28px;
+            cursor: pointer;
+            color: #7f8c8d;
+            line-height: 1;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+        }
+
+        .modal-close:hover {
+            color: #e74c3c;
+        }
+
+        .modal-filters {
+            padding: 15px 25px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 6px 14px;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .filter-btn:hover {
+            background: #f0f0f0;
+        }
+
+        .filter-btn.active {
+            background: #3498db;
+            color: white;
+            border-color: #3498db;
+        }
+
+        .modal-body {
+            padding: 20px 25px;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .steps-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 12px;
+        }
+
+        .step-item {
+            padding: 12px;
+            border-radius: 6px;
+            border: 2px solid;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.2s;
+            cursor: pointer;
+            position: relative;
+            z-index: 1;
+        }
+
+        .step-item.active-dropdown {
+            z-index: 1001;
+        }
+
+        .step-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .status-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 2px solid #3498db;
+            border-radius: 6px;
+            margin-top: 5px;
+            z-index: 1002;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            overflow: hidden;
+        }
+
+        .status-option {
+            padding: 10px 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+
+        .status-option:hover {
+            background: #f0f0f0;
+        }
+
+        .status-option.completed {
+            color: #27ae60;
+        }
+
+        .status-option.in-progress {
+            color: #3498db;
+        }
+
+        .step-item.completed {
+            background: #d4edda;
+            border-color: #27ae60;
+        }
+
+        .step-item.in-progress {
+            background: #d1ecf1;
+            border-color: #3498db;
+        }
+
+        .step-item.pending {
+            background: #f8f9fa;
+            border-color: #bdc3c7;
+        }
+
+        .step-icon {
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .step-info {
+            flex: 1;
+        }
+
+        .step-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .step-status-text {
+            font-size: 10px;
+            color: #7f8c8d;
+            text-transform: uppercase;
+            margin-top: 2px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="header-left">
+            <div class="logo">⚪ NTT DATA</div>
+            <div class="operations-text">OPERATIONS</div>
+        </div>
+        <div class="header-right">
+            <button class="icon-btn">⚙</button>
+            <button class="icon-btn">👤</button>
+            <div class="dimensions">300 × 100</div>
+        </div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Section Header -->
+        <div class="section-header">
+            <div class="section-title">
+                <span>📊</span>
+                <span>Operation</span>
+            </div>
+            <button class="btn-machine-schedule">Machine Schedule</button>
+        </div>
+
+        <!-- Filters -->
+        <div class="filters">
+            <div class="filter-group">
+                <label>Plant Location</label>
+                <select>
+                    <option>Plant1</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Production Line</label>
+                <select>
+                    <option>Shoes Mass. Prod Line</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Cards Grid -->
+        <div class="cards-grid" id="cardsContainer"></div>
+    </div>
+
+    <script src="mockdata.js"></script>
+    <script>
+        let currentModalSteps = [];
+        let currentFilter = 'all';
+
+        function getStatusSteps(statusFlow, statusDetails) {
+            const isManySteps = statusFlow.length > 7;
+            
+            const stepsHtml = statusDetails.map((step, index) => {
+                let stepClass = step.status;
+                
+                return `
+                    <div class="status-step ${stepClass}" title="${step.name} - ${step.status}">
+                        <div class="status-number">${index + 1}</div>
+                        <div class="status-text">${step.name}</div>
+                    </div>
+                `;
+            }).join('');
+            
+            const completed = statusDetails.filter(s => s.status === 'completed').length;
+            const counterBadge = isManySteps ? `<div class="status-counter">${completed}/${statusFlow.length}</div>` : '';
+            
+            return { stepsHtml, isManySteps, counterBadge };
+        }
+
+        function openStepsModal(orderId, statusFlow, statusDetails) {
+            currentModalSteps = statusDetails;
+            currentFilter = 'all';
+            
+            const modal = document.getElementById('stepsModal');
+            const modalTitle = document.getElementById('modalTitle');
+            
+            modalTitle.textContent = `All Steps - ${orderId}`;
+            renderModalSteps();
+            
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('stepsModal');
+            modal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        function filterSteps(filter) {
+            currentFilter = filter;
+            
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            renderModalSteps();
+        }
+
+        function renderModalSteps() {
+            const stepsGrid = document.getElementById('stepsGrid');
+
+            let filteredSteps = currentModalSteps;
+            if (currentFilter !== 'all') {
+                filteredSteps = currentModalSteps.filter(s => s.status === currentFilter);
+            }
+
+            stepsGrid.innerHTML = filteredSteps.map((step, index) => {
+                const icon = step.status === 'completed' ? '✅' :
+                            step.status === 'in-progress' ? '⏳' : '⚪';
+                const statusText = step.status === 'completed' ? 'Completed' :
+                                  step.status === 'in-progress' ? 'In Progress' : 'Pending';
+
+                const originalIndex = currentModalSteps.findIndex(s => s.name === step.name);
+
+                return `
+                    <div class="step-item ${step.status}" onclick="toggleStatusDropdown(event, ${originalIndex})">
+                        <div class="step-icon">${icon}</div>
+                        <div class="step-info">
+                            <div class="step-name">${step.name}</div>
+                            <div class="step-status-text">${statusText}</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function toggleStatusDropdown(event, stepIndex) {
+            event.stopPropagation();
+
+            // Remove any existing dropdowns and active classes
+            document.querySelectorAll('.status-dropdown').forEach(dd => dd.remove());
+            document.querySelectorAll('.step-item.active-dropdown').forEach(item => {
+                item.classList.remove('active-dropdown');
+            });
+
+            const stepItem = event.currentTarget;
+            const currentStatus = currentModalSteps[stepIndex].status;
+
+            // Add active class to current item
+            stepItem.classList.add('active-dropdown');
+
+            // Create dropdown
+            const dropdown = document.createElement('div');
+            dropdown.className = 'status-dropdown';
+            dropdown.innerHTML = `
+                <div class="status-option completed" onclick="updateStepStatus(event, ${stepIndex}, 'completed')">
+                    <span>✅</span>
+                    <span>Completed</span>
+                </div>
+                <div class="status-option in-progress" onclick="updateStepStatus(event, ${stepIndex}, 'in-progress')">
+                    <span>⏳</span>
+                    <span>In Progress</span>
+                </div>
+            `;
+
+            stepItem.appendChild(dropdown);
+        }
+
+        function updateStepStatus(event, stepIndex, newStatus) {
+            event.stopPropagation();
+
+            // Update the status in the data
+            currentModalSteps[stepIndex].status = newStatus;
+
+            // Update in the original work orders array
+            const workOrder = workOrders.find(wo => wo.statusDetails === currentModalSteps);
+            if (workOrder) {
+                workOrder.statusDetails[stepIndex].status = newStatus;
+            }
+
+            // Re-render modal and cards
+            renderModalSteps();
+            renderCards();
+
+            // Remove dropdown
+            document.querySelectorAll('.status-dropdown').forEach(dd => dd.remove());
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', () => {
+            document.querySelectorAll('.status-dropdown').forEach(dd => dd.remove());
+            document.querySelectorAll('.step-item.active-dropdown').forEach(item => {
+                item.classList.remove('active-dropdown');
+            });
+        });
+
+        function renderCards() {
+            const container = document.getElementById('cardsContainer');
+            container.innerHTML = workOrders.map(order => {
+                const { stepsHtml, isManySteps, counterBadge } = getStatusSteps(order.statusFlow, order.statusDetails);
+                
+                return `
+                <div class="work-order-card">
+                    <div class="card-header">
+                        <div class="card-title">${order.id}</div>
+                        <div class="card-badge">Work Order</div>
+                    </div>
+                    <div class="card-body">
+                        <div class="operator-section">
+                            <div class="operator-label">Assigned Operator</div>
+                            <div class="operator-value">${order.assignedOperator}</div>
+                        </div>
+
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <div class="info-label">Completion Date:</div>
+                                <div class="info-value">${order.completionDate}</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Quantity:</div>
+                                <div class="info-value">${order.quantity}</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Po Initial:</div>
+                                <div class="info-value">${order.poInitial}</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Actual Quantity:</div>
+                                <div class="info-value ${order.actualQuantity.includes('✓') ? 'green' : ''}">${order.actualQuantity}</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Planned Start:</div>
+                                <div class="info-value">${order.plannedStart}</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Planned End:</div>
+                                <div class="info-value">${order.plannedEnd}</div>
+                            </div>
+                        </div>
+
+                        ${order.productMemo ? `
+                        <div class="product-memo-section">
+                            <div class="product-memo-label">Product Memo</div>
+                            <div class="product-memo-value">${order.productMemo}</div>
+                        </div>
+                        ` : `<div style="height: 10px;"></div>`}
+
+                        <div class="status-progress ${isManySteps ? 'many-steps' : ''}" style="position: relative;">
+                            ${counterBadge}
+                            ${!isManySteps ? '<div class="progress-line"></div>' : ''}
+                            ${stepsHtml}
+                        </div>
+
+                        <button class="view-all-steps-btn" onclick='openStepsModal(${JSON.stringify(order.id)}, ${JSON.stringify(order.statusFlow)}, ${JSON.stringify(order.statusDetails)})'>
+                            View All Steps →
+                        </button>
+
+                        <div class="view-details-link">
+                            <a class="view-details" href="#">View Details →</a>
+                        </div>
+                    </div>
+                </div>
+            `;
+            }).join('');
+            
+            // Enhanced horizontal scroll functionality for both mouse wheel and trackpad
+            setTimeout(() => {
+                document.querySelectorAll('.status-progress.many-steps').forEach(container => {
+                    let isScrolling = false;
+                    let startX;
+                    let scrollLeft;
+                    
+                    // Mouse wheel and trackpad scroll handler
+                    container.addEventListener('wheel', (e) => {
+                        e.preventDefault();
+                        
+                        // Detect if it's a horizontal scroll (trackpad gesture)
+                        // deltaX is non-zero for horizontal trackpad gestures
+                        if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) {
+                            // Horizontal trackpad gesture
+                            container.scrollLeft += e.deltaX;
+                        } else {
+                            // Vertical scroll (mouse wheel or vertical trackpad)
+                            // Convert vertical to horizontal
+                            container.scrollLeft += e.deltaY;
+                        }
+                    }, { passive: false });
+                    
+                    // Touch/drag support for better control
+                    container.addEventListener('mousedown', (e) => {
+                        isScrolling = true;
+                        startX = e.pageX - container.offsetLeft;
+                        scrollLeft = container.scrollLeft;
+                        container.style.cursor = 'grabbing';
+                    });
+                    
+                    container.addEventListener('mouseleave', () => {
+                        isScrolling = false;
+                        container.style.cursor = 'grab';
+                    });
+                    
+                    container.addEventListener('mouseup', () => {
+                        isScrolling = false;
+                        container.style.cursor = 'grab';
+                    });
+                    
+                    container.addEventListener('mousemove', (e) => {
+                        if (!isScrolling) return;
+                        e.preventDefault();
+                        const x = e.pageX - container.offsetLeft;
+                        const walk = (x - startX) * 2; // Scroll speed multiplier
+                        container.scrollLeft = scrollLeft - walk;
+                    });
+                    
+                    // Set initial cursor
+                    container.style.cursor = 'grab';
+                });
+            }, 100);
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('stepsModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        }
+
+        renderCards();
+    </script>
+
+    <!-- Modal -->
+    <div id="stepsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title" id="modalTitle">All Steps</div>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-filters">
+                <button class="filter-btn active" onclick="filterSteps('all')">All</button>
+                <button class="filter-btn" onclick="filterSteps('completed')">✅ Completed</button>
+                <button class="filter-btn" onclick="filterSteps('in-progress')">⏳ In Progress</button>
+            </div>
+            <div class="modal-body">
+                <div class="steps-grid" id="stepsGrid"></div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

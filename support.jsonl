@@ -1,0 +1,177 @@
+{"input":"I am interested in a product demo","output":"SALES_TEAM"}
+{"input":"What pricing plans do you offer","output":"SALES_TEAM"}
+{"input":"Can someone from sales contact me","output":"SALES_TEAM"}
+{"input":"Do you provide discounts for startups","output":"SALES_TEAM"}
+{"input":"I want to upgrade my subscription","output":"SALES_TEAM"}
+{"input":"What features are included in the premium plan","output":"SALES_TEAM"}
+{"input":"Is there an annual billing option","output":"SALES_TEAM"}
+{"input":"Can I get a quote for 100 users","output":"SALES_TEAM"}
+{"input":"Tell me the cost difference between basic and pro","output":"SALES_TEAM"}
+{"input":"Do you offer enterprise pricing","output":"SALES_TEAM"}
+{"input":"I want to speak with your sales team","output":"SALES_TEAM"}
+{"input":"Is there a free trial available","output":"SALES_TEAM"}
+{"input":"What is the pricing for small businesses","output":"SALES_TEAM"}
+{"input":"Can I customize my plan","output":"SALES_TEAM"}
+{"input":"How much does the premium version cost","output":"SALES_TEAM"}
+{"input":"Do you have special offers","output":"SALES_TEAM"}
+{"input":"Can I upgrade my current plan","output":"SALES_TEAM"}
+{"input":"What payment options are available","output":"SALES_TEAM"}
+{"input":"Do you offer volume discounts","output":"SALES_TEAM"}
+{"input":"I want pricing details","output":"SALES_TEAM"}
+{"input":"Explain your subscription tiers","output":"SALES_TEAM"}
+{"input":"How much does the enterprise plan cost","output":"SALES_TEAM"}
+{"input":"Is pricing flexible","output":"SALES_TEAM"}
+{"input":"Can you share your pricing brochure","output":"SALES_TEAM"}
+{"input":"What is included in the business plan","output":"SALES_TEAM"}
+{"input":"Are there any onboarding fees","output":"SALES_TEAM"}
+{"input":"Can I switch plans later","output":"SALES_TEAM"}
+{"input":"Do you support custom contracts","output":"SALES_TEAM"}
+{"input":"How does billing work","output":"SALES_TEAM"}
+{"input":"What is the minimum contract period","output":"SALES_TEAM"}
+{"input":"Do you have reseller pricing","output":"SALES_TEAM"}
+{"input":"Can I talk to someone about pricing","output":"SALES_TEAM"}
+{"input":"Do you offer nonprofit discounts","output":"SALES_TEAM"}
+{"input":"What is your refund policy","output":"SALES_TEAM"}
+{"input":"Can I get a personalized quote","output":"SALES_TEAM"}
+{"input":"What plan is best for my company","output":"SALES_TEAM"}
+{"input":"How do I upgrade to enterprise","output":"SALES_TEAM"}
+{"input":"What add-ons are available","output":"SALES_TEAM"}
+{"input":"Do you offer monthly subscriptions","output":"SALES_TEAM"}
+{"input":"Is there a setup fee","output":"SALES_TEAM"}
+{"input":"How much does onboarding cost","output":"SALES_TEAM"}
+{"input":"Can I negotiate pricing","output":"SALES_TEAM"}
+{"input":"What is your pricing model","output":"SALES_TEAM"}
+{"input":"Do you provide demos","output":"SALES_TEAM"}
+{"input":"What are your licensing options","output":"SALES_TEAM"}
+{"input":"Can I bundle services","output":"SALES_TEAM"}
+{"input":"Is there a trial for enterprise","output":"SALES_TEAM"}
+{"input":"What is the renewal cost","output":"SALES_TEAM"}
+{"input":"How do I contact sales","output":"SALES_TEAM"}
+{"input":"Do you offer contract discounts","output":"SALES_TEAM"}
+{"input":"What are the upgrade benefits","output":"SALES_TEAM"}
+{"input":"Is pricing based on usage","output":"SALES_TEAM"}
+{"input":"Can I change billing cycles","output":"SALES_TEAM"}
+{"input":"What happens if I exceed limits","output":"SALES_TEAM"}
+{"input":"Are there hidden charges","output":"SALES_TEAM"}
+{"input":"What currencies do you support","output":"SALES_TEAM"}
+{"input":"How does enterprise billing work","output":"SALES_TEAM"}
+{"input":"Can I get invoice billing","output":"SALES_TEAM"}
+{"input":"What is the cancellation policy","output":"SALES_TEAM"}
+
+{"input":"I am unable to log into my account","output":"SUPPORT_TEAM"}
+{"input":"My password reset link is not working","output":"SUPPORT_TEAM"}
+{"input":"The application is not loading","output":"SUPPORT_TEAM"}
+{"input":"I am facing a billing issue","output":"SUPPORT_TEAM"}
+{"input":"My account was charged incorrectly","output":"SUPPORT_TEAM"}
+{"input":"I cannot access my dashboard","output":"SUPPORT_TEAM"}
+{"input":"How do I reset my password","output":"SUPPORT_TEAM"}
+{"input":"My subscription did not update","output":"SUPPORT_TEAM"}
+{"input":"The app keeps crashing","output":"SUPPORT_TEAM"}
+{"input":"I am seeing an error message","output":"SUPPORT_TEAM"}
+{"input":"My payment failed","output":"SUPPORT_TEAM"}
+{"input":"How do I cancel my subscription","output":"SUPPORT_TEAM"}
+{"input":"I was double charged","output":"SUPPORT_TEAM"}
+{"input":"The feature is not working","output":"SUPPORT_TEAM"}
+{"input":"I need help with my account","output":"SUPPORT_TEAM"}
+{"input":"How do I update my billing details","output":"SUPPORT_TEAM"}
+{"input":"My account is locked","output":"SUPPORT_TEAM"}
+{"input":"I forgot my login email","output":"SUPPORT_TEAM"}
+{"input":"The service is down","output":"SUPPORT_TEAM"}
+{"input":"I am not receiving notifications","output":"SUPPORT_TEAM"}
+{"input":"How do I contact support","output":"SUPPORT_TEAM"}
+{"input":"My invoice is incorrect","output":"SUPPORT_TEAM"}
+{"input":"The app is slow","output":"SUPPORT_TEAM"}
+{"input":"I need help with setup","output":"SUPPORT_TEAM"}
+{"input":"How do I change my email","output":"SUPPORT_TEAM"}
+{"input":"I cannot upload files","output":"SUPPORT_TEAM"}
+{"input":"Why is my account suspended","output":"SUPPORT_TEAM"}
+{"input":"The report is not generating","output":"SUPPORT_TEAM"}
+{"input":"I lost access to my account","output":"SUPPORT_TEAM"}
+{"input":"My trial expired unexpectedly","output":"SUPPORT_TEAM"}
+{"input":"How do I reactivate my account","output":"SUPPORT_TEAM"}
+{"input":"The download is failing","output":"SUPPORT_TEAM"}
+{"input":"My data is missing","output":"SUPPORT_TEAM"}
+{"input":"I am getting a permission error","output":"SUPPORT_TEAM"}
+{"input":"How do I raise a support ticket","output":"SUPPORT_TEAM"}
+{"input":"The app shows incorrect data","output":"SUPPORT_TEAM"}
+{"input":"Why am I logged out automatically","output":"SUPPORT_TEAM"}
+{"input":"The feature is disabled","output":"SUPPORT_TEAM"}
+{"input":"I need help with configuration","output":"SUPPORT_TEAM"}
+{"input":"My account settings are not saving","output":"SUPPORT_TEAM"}
+{"input":"The app is timing out","output":"SUPPORT_TEAM"}
+{"input":"Why is my payment pending","output":"SUPPORT_TEAM"}
+{"input":"I cannot export data","output":"SUPPORT_TEAM"}
+{"input":"My login credentials are rejected","output":"SUPPORT_TEAM"}
+{"input":"The dashboard is blank","output":"SUPPORT_TEAM"}
+{"input":"How do I update my profile","output":"SUPPORT_TEAM"}
+{"input":"I am stuck on the loading screen","output":"SUPPORT_TEAM"}
+{"input":"The app is not responding","output":"SUPPORT_TEAM"}
+{"input":"Why is my account inactive","output":"SUPPORT_TEAM"}
+{"input":"I need technical assistance","output":"SUPPORT_TEAM"}
+{"input":"My request is not processed","output":"SUPPORT_TEAM"}
+{"input":"The system is unavailable","output":"SUPPORT_TEAM"}
+{"input":"How do I recover my account","output":"SUPPORT_TEAM"}
+{"input":"I cannot change my password","output":"SUPPORT_TEAM"}
+{"input":"The app shows a server error","output":"SUPPORT_TEAM"}
+{"input":"My usage data is incorrect","output":"SUPPORT_TEAM"}
+{"input":"Why is my feature missing","output":"SUPPORT_TEAM"}
+{"input":"The app update failed","output":"SUPPORT_TEAM"}
+{"input":"I need help urgently","output":"SUPPORT_TEAM"}
+{"input":"The page is not refreshing","output":"SUPPORT_TEAM"}
+
+{"input":"How do I integrate your API","output":"TECH_TEAM"}
+{"input":"Do you support webhooks","output":"TECH_TEAM"}
+{"input":"What programming languages are supported","output":"TECH_TEAM"}
+{"input":"How do I authenticate with the API","output":"TECH_TEAM"}
+{"input":"Is there SDK documentation","output":"TECH_TEAM"}
+{"input":"How do I configure SSO","output":"TECH_TEAM"}
+{"input":"What is the API rate limit","output":"TECH_TEAM"}
+{"input":"Do you support OAuth","output":"TECH_TEAM"}
+{"input":"How do I deploy this on AWS","output":"TECH_TEAM"}
+{"input":"Can I run this on Kubernetes","output":"TECH_TEAM"}
+{"input":"What databases are supported","output":"TECH_TEAM"}
+{"input":"How do I enable logging","output":"TECH_TEAM"}
+{"input":"Is there a sandbox environment","output":"TECH_TEAM"}
+{"input":"How do I debug API errors","output":"TECH_TEAM"}
+{"input":"What are the system requirements","output":"TECH_TEAM"}
+{"input":"How do I upgrade the API version","output":"TECH_TEAM"}
+{"input":"Do you support custom integrations","output":"TECH_TEAM"}
+{"input":"How do I set environment variables","output":"TECH_TEAM"}
+{"input":"Is there a staging environment","output":"TECH_TEAM"}
+{"input":"How do I optimize performance","output":"TECH_TEAM"}
+{"input":"What is the data retention policy","output":"TECH_TEAM"}
+{"input":"How do I handle authentication tokens","output":"TECH_TEAM"}
+{"input":"Do you provide API examples","output":"TECH_TEAM"}
+{"input":"How do I enable caching","output":"TECH_TEAM"}
+{"input":"What encryption standards are used","output":"TECH_TEAM"}
+{"input":"How do I configure load balancing","output":"TECH_TEAM"}
+{"input":"Is the API backward compatible","output":"TECH_TEAM"}
+{"input":"How do I migrate data","output":"TECH_TEAM"}
+{"input":"What cloud platforms are supported","output":"TECH_TEAM"}
+{"input":"How do I scale the application","output":"TECH_TEAM"}
+{"input":"Do you support Docker","output":"TECH_TEAM"}
+{"input":"How do I monitor the service","output":"TECH_TEAM"}
+{"input":"What logging tools are compatible","output":"TECH_TEAM"}
+{"input":"How do I set up alerts","output":"TECH_TEAM"}
+{"input":"Do you provide sample code","output":"TECH_TEAM"}
+{"input":"How do I manage secrets","output":"TECH_TEAM"}
+{"input":"Is the system highly available","output":"TECH_TEAM"}
+{"input":"How do I handle failover","output":"TECH_TEAM"}
+{"input":"What CI/CD tools are supported","output":"TECH_TEAM"}
+{"input":"How do I deploy updates","output":"TECH_TEAM"}
+{"input":"Do you support multi-tenancy","output":"TECH_TEAM"}
+{"input":"How do I configure firewalls","output":"TECH_TEAM"}
+{"input":"What APIs are available","output":"TECH_TEAM"}
+{"input":"How do I enable metrics","output":"TECH_TEAM"}
+{"input":"Is there a health check endpoint","output":"TECH_TEAM"}
+{"input":"How do I troubleshoot latency","output":"TECH_TEAM"}
+{"input":"What message queues are supported","output":"TECH_TEAM"}
+{"input":"How do I configure backups","output":"TECH_TEAM"}
+{"input":"Do you support event-driven architecture","output":"TECH_TEAM"}
+{"input":"How do I manage API keys","output":"TECH_TEAM"}
+{"input":"Is there a developer portal","output":"TECH_TEAM"}
+{"input":"How do I test integrations","output":"TECH_TEAM"}
+{"input":"What frameworks are compatible","output":"TECH_TEAM"}
+{"input":"How do I enable versioning","output":"TECH_TEAM"}
+{"input":"Do you support GraphQL","output":"TECH_TEAM"}
+{"input":"How do I secure endpoints","output":"TECH_TEAM"}

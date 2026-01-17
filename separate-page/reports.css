@@ -1,0 +1,517 @@
+/* ============================================
+   NTT Scheduler - Reports Page Styles
+   Using Tabulator.js
+   ============================================ */
+
+/* Reset & Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    /* Primary Colors - Matching Main App */
+    --primary-dark: #2c3e50;
+    --primary-blue: #3498db;
+    --secondary-dark: #34495e;
+    --accent-blue: #4a90e2;
+
+    /* Status Colors */
+    --success-green: #27ae60;
+    --warning-orange: #f39c12;
+    --danger-red: #e74c3c;
+    --info-cyan: #17a2b8;
+
+    /* Neutral Colors */
+    --gray-light: #ecf0f1;
+    --gray-medium: #95a5a6;
+    --gray-dark: #7f8c8d;
+    --white: #ffffff;
+
+    /* Shadows */
+    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
+    --shadow-md: 0 5px 15px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+
+body {
+    font-family: 'Raleway', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--gray-light);
+    color: #333;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+/* ============================================
+   Header Styles
+   ============================================ */
+.main-header {
+    background: var(--primary-dark);
+    color: var(--white);
+    padding: 20px 0;
+    box-shadow: var(--shadow-md);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.header-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--white);
+}
+
+.header-subtitle {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.main-header i.fa-chart-bar {
+    font-size: 2.5rem;
+    color: var(--primary-blue);
+}
+
+.header-actions .btn {
+    border-radius: 8px;
+    padding: 10px 20px;
+    font-weight: 600;
+}
+
+/* ============================================
+   Main Content
+   ============================================ */
+.main-content {
+    padding: 30px 0;
+    min-height: calc(100vh - 100px);
+}
+
+/* ============================================
+   Card Styles - Matching Main App
+   ============================================ */
+.card {
+    background: var(--white);
+    border: none;
+    border-radius: 12px;
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 20px;
+    overflow: hidden;
+}
+
+.card-header {
+    background: var(--gray-light);
+    border-bottom: 2px solid #dee2e6;
+    padding: 15px 20px;
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: var(--primary-dark);
+}
+
+.card-body {
+    padding: 25px;
+}
+
+.card-body.p-0 {
+    padding: 0;
+}
+
+/* ============================================
+   Form Styles
+   ============================================ */
+.form-label {
+    font-weight: 600;
+    color: var(--primary-dark);
+    margin-bottom: 8px;
+}
+
+.form-select {
+    border: 2px solid #d0d7de;
+    border-radius: 8px;
+    padding: 10px 15px;
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+.form-select:focus {
+    border-color: var(--accent-blue);
+    box-shadow: 0 0 0 0.2rem rgba(74, 144, 226, 0.25);
+    outline: none;
+}
+
+/* ============================================
+   Button Styles - Matching Main App
+   ============================================ */
+.btn {
+    border-radius: 8px;
+    padding: 10px 20px;
+    font-weight: 600;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    border: none;
+}
+
+.btn-primary {
+    background: var(--primary-blue);
+    color: var(--white);
+}
+
+.btn-primary:hover {
+    background: var(--accent-blue);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(52, 152, 219, 0.4);
+}
+
+.btn-secondary {
+    background: var(--gray-dark);
+    color: var(--white);
+}
+
+.btn-secondary:hover {
+    background: #6c757d;
+    transform: translateY(-2px);
+}
+
+.btn-success {
+    background: var(--success-green);
+    color: var(--white);
+}
+
+.btn-success:hover {
+    background: #229954;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(39, 174, 96, 0.4);
+}
+
+.btn-danger {
+    background: var(--danger-red);
+    color: var(--white);
+}
+
+.btn-danger:hover {
+    background: #c0392b;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(231, 76, 60, 0.4);
+}
+
+.btn-outline-secondary {
+    border: 2px solid var(--gray-dark);
+    color: var(--gray-dark);
+    background: transparent;
+}
+
+.btn-outline-secondary:hover {
+    background: var(--gray-dark);
+    color: var(--white);
+}
+
+.btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none !important;
+}
+
+/* ============================================
+   Badge Styles
+   ============================================ */
+.badge {
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 5px 10px;
+}
+
+/* ============================================
+   Tabulator Custom Styles
+   ============================================ */
+#ordersTable {
+    font-family: 'Raleway', sans-serif;
+}
+
+/* Tabulator Header */
+.tabulator .tabulator-header {
+    background: var(--primary-dark) !important;
+    color: var(--white) !important;
+    border: none !important;
+}
+
+.tabulator .tabulator-header .tabulator-col {
+    background: var(--primary-dark) !important;
+    color: var(--white) !important;
+    border-right: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+.tabulator .tabulator-header .tabulator-col .tabulator-col-content {
+    padding: 12px 10px;
+}
+
+.tabulator .tabulator-header .tabulator-col .tabulator-col-title {
+    font-weight: 600;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Tabulator Header Sort Icons */
+.tabulator .tabulator-header .tabulator-col.tabulator-sortable .tabulator-col-title {
+    padding-right: 20px;
+}
+
+.tabulator .tabulator-header .tabulator-col .tabulator-arrow {
+    border-bottom-color: var(--white) !important;
+    border-top-color: var(--white) !important;
+}
+
+/* Hide header filters */
+.tabulator .tabulator-header .tabulator-col .tabulator-header-filter {
+    display: none !important;
+}
+
+/* Tabulator Rows */
+.tabulator .tabulator-row {
+    border-bottom: 1px solid #e9ecef !important;
+}
+
+.tabulator .tabulator-row:hover {
+    background-color: #f8f9fa !important;
+}
+
+.tabulator .tabulator-row .tabulator-cell {
+    padding: 12px 10px;
+    font-size: 14px;
+    color: #495057;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Tabulator Alternating Rows */
+.tabulator-row.tabulator-row-even {
+    background-color: #ffffff;
+}
+
+.tabulator-row.tabulator-row-odd {
+    background-color: #fafbfc;
+}
+
+/* Tabulator Footer */
+.tabulator .tabulator-footer {
+    background: var(--gray-light) !important;
+    border-top: 2px solid #dee2e6 !important;
+    padding: 12px 15px !important;
+}
+
+.tabulator .tabulator-footer .tabulator-page {
+    border: 1px solid var(--gray-dark);
+    border-radius: 6px;
+    padding: 6px 12px;
+    margin: 0 4px;
+    color: var(--gray-dark);
+    font-weight: 600;
+}
+
+.tabulator .tabulator-footer .tabulator-page:hover {
+    background: var(--gray-dark);
+    color: var(--white);
+}
+
+.tabulator .tabulator-footer .tabulator-page.active {
+    background: var(--primary-blue);
+    color: var(--white);
+    border-color: var(--primary-blue);
+}
+
+/* Prevent responsive collapse */
+.tabulator .tabulator-responsive-collapse {
+    display: none !important;
+}
+
+/* ============================================
+   Status Badges in Tabulator
+   ============================================ */
+.status-badge {
+    display: inline-block;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.status-arrived {
+    background: #e3f2fd;
+    color: #1976d2;
+}
+
+.status-planned {
+    background: #fff3e0;
+    color: #f57c00;
+}
+
+.status-unplanned {
+    background: #ffebee;
+    color: #c62828;
+}
+
+.status-completed {
+    background: #e8f5e9;
+    color: #2e7d32;
+}
+
+.status-cancelled {
+    background: #f5f5f5;
+    color: #616161;
+}
+
+/* ============================================
+   Responsive Design
+   ============================================ */
+@media (max-width: 768px) {
+    .header-title {
+        font-size: 1.3rem;
+    }
+
+    .header-subtitle {
+        display: none;
+    }
+
+    .main-header i.fa-chart-bar {
+        font-size: 1.8rem;
+    }
+
+    .header-actions {
+        display: none;
+    }
+
+    .main-content {
+        padding: 20px 0;
+    }
+
+    .card-body {
+        padding: 15px;
+    }
+
+    .btn {
+        padding: 8px 15px;
+        font-size: 13px;
+    }
+
+    /* Enable horizontal scroll on mobile */
+    .tabulator .tabulator-tableHolder {
+        overflow-x: auto !important;
+    }
+}
+
+@media (max-width: 576px) {
+    .card-header {
+        font-size: 1rem;
+        padding: 12px 15px;
+    }
+
+    .status-badge {
+        padding: 3px 8px;
+        font-size: 10px;
+    }
+}
+
+/* ============================================
+   Utilities
+   ============================================ */
+.text-nowrap {
+    white-space: nowrap;
+}
+
+.text-truncate {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Smooth Scrolling */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--gray-light);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--gray-medium);
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--gray-dark);
+}
+
+/* ============================================
+   Loading Overlay
+   ============================================ */
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.loading-spinner {
+    color: var(--white);
+    font-size: 3rem;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* ============================================
+   Toast Notifications
+   ============================================ */
+.toast-notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    min-width: 250px;
+    background: var(--white);
+    border-radius: 8px;
+    box-shadow: var(--shadow-lg);
+    padding: 15px 20px;
+    z-index: 10000;
+    animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(400px);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+.toast-notification.success {
+    border-left: 4px solid var(--success-green);
+}
+
+.toast-notification.error {
+    border-left: 4px solid var(--danger-red);
+}
+
+.toast-notification.info {
+    border-left: 4px solid var(--info-cyan);
+}

@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NTT Data - Process Steps</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+        
+        .sidebar {
+            width: 230px;
+            background: #2c4456;
+            color: white;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .logo {
+            padding: 15px 20px;
+            font-size: 24px;
+            font-weight: bold;
+            border-bottom: 1px solid #3a5568;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .nav-item {
+            padding: 12px 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: background 0.3s;
+        }
+        
+        .nav-item:hover {
+            background: #3a5568;
+        }
+        
+        .nav-item.active {
+            background: #3d5a6f;
+        }
+        
+        .main-content {
+            flex: 1;
+            background: #e8eef2;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .header {
+            background: #3d5a6f;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+        }
+        
+        .header-right {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+        
+        .icon-btn {
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+        }
+        
+        .zoom {
+            background: #94a3b8;
+            color: #2c4456;
+            padding: 5px 15px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        
+        .content {
+            padding: 40px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .content h1 {
+            color: #2c4456;
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+        
+        .content p {
+            color: #64748b;
+            font-size: 14px;
+        }
+        
+        .work-area {
+            background: white;
+            margin-top: 30px;
+            flex: 1;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .work-area iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="logo">
+            <span>●</span> NTT DATA
+        </div>
+        <div class="nav-item">🏷️ Branding</div>
+        <div class="nav-item">⚙️ Master Config</div>
+        <div class="nav-item">📅 Holiday Calendar</div>
+        <div class="nav-item">🔧 Machine</div>
+        <div class="nav-item active">🔒 Process Steps</div>
+        <div class="nav-item">🧩 Constraint Builder</div>
+        <div class="nav-item">📊 Material Config</div>
+        <div class="nav-item">🔗 Constraint Mapping</div>
+        <div class="nav-item">🛒 Order</div>
+        <div class="nav-item">⚡ Advanced Settings</div>
+        <div class="nav-item">💻 Display Settings</div>
+        <div class="nav-item">🗺️ FG Machine Map</div>
+        <div class="nav-item">💾 Data Backup</div>
+    </div>
+    
+    <div class="main-content">
+        <div class="header">
+            <button class="icon-btn">◀</button>
+            <div class="header-right">
+                <button class="icon-btn">⚙️</button>
+                <button class="icon-btn">👤</button>
+                <div class="zoom">300 × 100</div>
+            </div>
+        </div>
+        
+        <div class="content">
+            <h1>Process Steps</h1>
+            <p>Define and manage process workflow steps</p>
+            <div class="work-area">
+                <iframe src="process-steps.html"></iframe>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
